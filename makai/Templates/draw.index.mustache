@@ -140,7 +140,7 @@
             data.append("drawing", drawer.drawer.ToString()); 
             data.append("name", drawingName);
             data.append("action", "save"); 
-            RequestUtilities.XHRSimple("manager", function(response)
+            RequestUtilities.XHRSimple("/draw/manager", function(response)
             {
                var output = JSON.parse(response);
                if(output.result)
@@ -225,7 +225,7 @@
          data.append("artistID", getArtistID());
          data.append("drawingID", id);
          data.append("action", "load");
-         RequestUtilities.XHRSimple("manager", function(response)
+         RequestUtilities.XHRSimple("/draw/manager", function(response)
          {
             try
             {
@@ -266,7 +266,7 @@
          var data = new FormData();
          data.append("artistID", artistID);
          data.append("action", "list");
-         RequestUtilities.XHRSimple("manager", function(response)
+         RequestUtilities.XHRSimple("/draw/manager", function(response)
          {
             //console.debug("Response for file list refresh: \n" + response);
             var json = JSON.parse(response);
