@@ -6,12 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace makai.Controllers;
 
 [ApiController]
-public class BaseController : Controller //: KlandBase
+public class BaseController : Controller
 {
     protected ILogger logger;
     protected IPageRenderer pageRenderer;
 
-    public BaseController(ILogger<DrawController> logger, IPageRenderer pageRenderer) 
+    public BaseController(ILogger logger, IPageRenderer pageRenderer) 
     {
         this.logger = logger;
         this.pageRenderer = pageRenderer;

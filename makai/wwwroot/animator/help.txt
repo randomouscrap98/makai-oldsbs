@@ -1,0 +1,196 @@
+---------------------------------
+ The "Offline" Chatdraw Animator
+---------------------------------
+
+ randomouscrap98@aol.com - 2018
+
+ Only tested on new-ish Google Chrome on Windows. Not sure if it works on
+ mobile Chrome or Firefox or anything else. Use at your own risk; I assume no
+ responsibility for lost work.
+
+ This wouldn't have been made without the input and inspiring talent of TiP.
+
+
+-- Background --
+
+ I run a website called "SmileBASIC Source". It's for programmers but whatever.
+
+ There's a chatroom with a simple drawing utility. Eventually it got upgraded
+ into an animation utility. Then someone wanted ANYONE to be able to use the
+ utility without being in chat or logged into this website.
+ 
+ This is that utility taken directly from that chatroom and plastered into 
+ another webpage. Extra tools have been added so you can save and load to files 
+ instead of my server.
+
+
+-- About --
+
+ This is a VERY simple drawing and animation tool. The drawings were originally
+ sent in chat as TEXT, so the drawings were very small and restricted to 4 
+ colors. There are not very many tools and no panning/zooming/etc.
+ 
+ This utility allows you to create drawings and animations with 4 colors of 
+ your choosing on a 200x100 canvas. You can save these drawings and animations
+ as a text file on your computer, then load them later. You can also export your
+ animations as a gif to the crappy image uploader called "kland" (also part of
+ my website).
+
+
+-- Getting Started --
+
+ Remember, this was pulled as-is directly from chat, so it will seem weird.
+
+ First, click on the pencil at the bottom right of the screen to bring up the
+ utility. Clicking the pencil again will hide it again.
+
+ The pane on the left are the animation controls and frames. You can add new
+ frames, set the frame time, control the onionskin, toggle looping, export, and
+ play your animation over here. Each frame also has some controls for setting
+ an individual frame time, copying, pasting, and deleting frames.
+
+ The larger area on the right has the canvas and drawing controls. The top row
+ has scaling, undo/redo, colors, and a disabled send button (you can't send
+ since you're not in chat). The bottom row has shift canvas, clear, pen size
+ toggle, flood fill, line, freehand, and the utitility toggle. 
+
+
+-- Drawing Tools --
+
+ Clicking on the colors lets you change them. However, you can only have 4
+ colors at a time, so changing one of them will change all pixels of that
+ color. You can have different colors per frame of animation.
+
+ Clicking the number underneath the colors cycles the general tool size. 
+ Clicking the tools also cycles through their types: clicking the fill tool 
+ multiple times will change it to a full-cover tool. Clicking the line tool
+ toggles it to a square tool. Clicking the freehand tool toggles to slow-line
+ (a fountain pen) then to ms-paint style spraycan. The selected tool is always
+ highlighted.
+
+ ◘ = flood fill
+ ◼ = full cover
+ ▬ = straight line
+ ◻ = square outline
+ ✏ = freehand
+ ✒ = slow freehand (lag brush)
+ ⚟ = ms-paint spraycan
+
+ NOTE: You can only undo the last 5 actions. Switching animation frames will
+ clear all undos, so be careful.
+ NOTE: The "send drawing" button ➥ is disabled since there is no chat.
+
+ ◲ = utility scale (bigger/smaller)
+ ↶ = undo
+ ↷ = redo
+ ↭ = move drawing
+ ✖ = clear all (can undo)
+ ✎ = toggle utility
+
+ NOTE: The "clear all" button attempts to find your "background" color. It is
+ either the lightest color or the darkest color, depending on the context. If
+ it is confusing or not doing what you expect, you can instead use the "full
+ cover" tool to fill the whole screen with your selected color. The "clear all"
+ button is there for legacy purposes.
+
+
+-- Animation Tools --
+
+ The animation pane is on the left, remember. The controls are on the top of
+ this pane. The controls at the bottom (Animation Name, etc) are UNUSABLE 
+ unless you are logged into SmileBASIC Source. Just assume they don't work.
+
+ All animation controls have hover text, so if you forget just hover over it.
+
+ The textbox next to the "new frame" button is the default "frame time". Frame
+ time in this utility is measured by 1/60th of a second. A frame time of 3
+ means every frame in your animation will be on screen for 3/60th of a second.
+ The "fps" of your animation will then be 60 / frame time, so a frame time of 3
+ will mean a 20fps animation.
+
+ The "0" next to the frame time is the onionskin. It counts up to 3, then falls
+ down to -3. It is the amount of frames to show for the onionskin; positive
+ values for normal "past frames" onionskin, and negative values for reverse
+ "future frames" onionskin. 
+ 
+ The little truck is the export button. Exporting may take a while, so please
+ be patient. After the export is finished, a popup should show up. Your browser
+ is MOST LIKELY blocking popups, so make sure you look at the top right corner
+ of the browser for the blocked popup. I talk more about exporting later.
+
+ The disabled button is stuff from the chat. You don't need it.
+
+ The very last button is the play/pause button. It will start the animation
+ from the currently selected frame and play to the end. If looping is enabled,
+ it will play until you stop it. The animation is shown in the drawing area,
+ and you will lose your undos, so please be careful.
+
+ Each frame can override the default frame time to set their own time. This is
+ useful if you want a certain frame to be on screen longer, like a titlecard.
+ The other controls are for copying and pasting frames. The frames are NOT
+ stored on your system clipboard, so you can't copy a frame then paste it into
+ PAINT or something. The X on the right of the frame deletes it. Please be
+ careful.
+
+ You cannot reorder frames by dragging them. You have to copy/paste/delete.
+ Please keep this in mind while animating.
+
+
+-- Saving and Loading --
+
+ Make sure you save often! I don't know how stable all this is; I'm not
+ perfect! 
+
+ The OLD saving and loading system used SmileBASIC Source logins and data. It's
+ the controls at the bottom of the animation pane on the left (that textbox
+ with Animation Name and the paper/pencil/hand/L). You can't use these unless
+ you're logged into my website, so just ignore them.
+
+ The NEW saving system is up at the top of the page. The animations are stored
+ as text files on your computer that you can save/load whenever, even if you're
+ not online. 
+
+ To save, enter a name for your animation and click "Generate". A link will be
+ created on the right; click it to download your save. Browsers are silly and 
+ don't let me start a download FOR you, so you have to do this 2 step process.
+ I'm sorry: just generate THEN download.
+
+ To load, just browse for the file on your computer using the file thingy
+ there, then click load. It SHOULD show a confirmation. Remember, it WILL
+ overwrite whatever is currently in the animator utility!
+
+
+-- Exporting Notes --
+ 
+ When you export, you are sending a bunch of data to my server so it can
+ assemble all your frames into a gif. It can take a while... I'm sorry. I put
+ the completed gif into my image uploader service called "kland" in a PUBLIC 
+ bucket (folder) of your choice. Then your gif SHOULD show up in a popup, but
+ most browsers block popups. The blocked popop will usually show up on the top
+ of the browser. In chrome, it's in the URL bar all the way on the right. 
+
+ kland is a public image uploader with no logins. Pictures are organized into
+ "buckets", which are like public folders that anybody can access. So the only 
+ "security" is choosing a bucket name nobody will guess. If you don't care 
+ about privacy, you can keep the default bucket of "chatDrawAnimations" that 
+ you see at the top of the screen.
+
+ I recommend changing the bucket to something only you would know and not
+ giving it out to anybody, that way nobody can see what you export.
+
+ The link next to the bucket name will take you to kland so you can see all
+ your exports. If you're using the default bucket, you'll see a bunch of other
+ exports from other people who also use the default bucket. 
+
+ You can have as many "buckets" as you want. They're like folders: you could
+ put all your nsfw exports into some secretly named bucket, then put all your
+ tame stuff in a bucket that you give out.
+
+ If you need more help with kland, please let me know. My email is at the top
+ of this document.
+
+ NOTE: Unfortunately, web browsers can't make gifs, so I HAVE to do it on my 
+ server.  I wish I could just give you the gif locally so you can download it 
+ like the save files... but I can't.
+
+

@@ -27,6 +27,7 @@ services.AddSingleton<IPageRenderer, MustacheRenderer>();
 AddConfigBinding<RenderConfig>(services, configuration);
 AddConfigBinding<DrawControllerConfig>(services, configuration);
 AddConfigBinding<TinyComputerControllerConfig>(services, configuration);
+AddConfigBinding<OfflineAnimatorControllerConfig>(services, configuration);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

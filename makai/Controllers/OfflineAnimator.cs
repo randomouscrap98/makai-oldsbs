@@ -3,17 +3,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace makai.Controllers;
 
-public class TinyComputerControllerConfig
+public class OfflineAnimatorControllerConfig
 {
 }
 
 [ApiController]
-[Route("tinycomputer")]
-public class TinyComputerController : BaseController
+[Route("animator")]
+public class OfflineAnimatorController : BaseController
 {
-    protected TinyComputerControllerConfig config;
+    protected OfflineAnimatorControllerConfig config;
 
-    public TinyComputerController(ILogger<TinyComputerController> logger, TinyComputerControllerConfig config, IPageRenderer pageRenderer) 
+    public OfflineAnimatorController(ILogger<OfflineAnimatorController> logger, OfflineAnimatorControllerConfig config, IPageRenderer pageRenderer) 
         : base(logger, pageRenderer)
     {
         this.config = config;
@@ -24,11 +24,11 @@ public class TinyComputerController : BaseController
     {
         //Need to look up threads? AND posts?? wow 
         var data = GetDefaultData();
-        data["root"] = "/tinycomputer/";
+        data["root"] = "/animator/";
 
         return new ContentResult{
             ContentType = "text/html",
-            Content = await pageRenderer.RenderPageAsync("tinycomputer.index", data)
+            Content = await pageRenderer.RenderPageAsync("offlineanimator.index", data)
         };
     }
 }
