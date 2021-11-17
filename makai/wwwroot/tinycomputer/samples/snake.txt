@@ -1,0 +1,284 @@
+#An attempt at "Snake" on this dang thing
+#If you want to see your score, type "1000" into the
+#memory checker
+
+#Because I like functions at the top, 
+#this will just get us past them all
+jmp init
+
+#-------------
+# "Variables"
+#-------------
+
+!@time      m65535 ! #This actually does hold unix time
+!@lineptr   m55534 ! #Where to place a line (pointer)
+!@drawtemp  m55533 ! #A temporary variable for the draw functions
+!@drawtemp2 m55532 ! #Another temp variable for drawing
+!@pixx    	m55531 ! #Where to place pixel (x dimension)
+!@pixy			m55530 ! #Where to place pixel (y dimension)
+!@snakelength m1000! #Length of snake (and score)
+!@snakex m1001     ! #Snake x position
+!@snakey m1002     ! #Snake y position
+!@foodx  m1003     ! #Food x position
+!@foody  m1004     ! #Food y position
+!@snakedir m1005   ! #The direction of the snake
+!@snakefrontx m1006! #Where in the array the snake front is
+!@snakefronty m1007! #Front of array for y position
+!@didgrow m1008    ! #Whether or not we grew
+!@nextrand m55528  ! #Next random number (gen with random function)
+!@randmul  m55527  ! #The multiplier for the lcg
+!@randmod  m55526  ! #The modulus for the lcg
+!@randinc  m55525  ! #The increment for the lcg
+!@rndnxt   m55524  ! #The internal next random (don't use it)
+!@checkpix m55523  ! #The return value for checkpix
+!@checkpixx m55522 ! #The x value to check
+!@checkpixy m55521 ! #The y value to check
+!@dirtemp m55520   ! #Temp variable for direction code
+!@oldbtn  m55519   ! #The old direction (for better input)
+!@curbtn  m55518   ! #Current direction (after processing)
+
+#------------------
+# Screen stuff
+#------------------
+
+#When called, this will clear the screen
+clearscreen:
+	add 0 0 @drawtemp  #using drawtemp as a pointer
+	clearscreenloop:
+		add 0 0 *@drawtemp							#Clear current row
+		add 1 @drawtemp @drawtemp				#Go to next video line
+		beq @drawtemp 32 clearscreenend	#Stop when we reach the bottom
+		jmp clearscreenloop
+	clearscreenend:
+ret
+
+#Fill a horizontal line based on the value in @hlineptr
+fillhline:
+	add 0 0 @drawtemp
+	not @drawtemp *@lineptr
+ret
+
+#Fill a vertical line based on the value in @lineptr
+fillvline:
+	add 0 0 @drawtemp				#Which row we're on (start at 0)
+	add 1 0 @drawtemp2			 					#These two lines create a value
+	ls @drawtemp2 @lineptr @drawtemp2	#which is the line mask for one row
+	fillvlineloop:
+		or @drawtemp2 *@drawtemp *@drawtemp
+		add 1 @drawtemp @drawtemp
+		beq @drawtemp 32 fillvlineend
+		jmp fillvlineloop
+	fillvlineend:
+ret
+
+#Return 1 in checkpix if pixel at checkpixx,checkpixy is set
+checkpix:
+	add 0 *@checkpixy @checkpix
+	rs @checkpix @checkpixx @checkpix
+	and @checkpix 1 @checkpix
+ret
+
+#Turn on pixel pixx, pixy
+pixon:
+	ls 1 @pixx @drawtemp
+	or *@pixy @drawtemp *@pixy
+ret
+
+#Turn off pixel pixx, pixy
+pixoff:
+	ls 1 @pixx @drawtemp
+	not @drawtemp @drawtemp
+	and *@pixy @drawtemp *@pixy
+ret
+
+#------------------
+# Random Generator
+#------------------
+
+#Initialize the random number generator
+randominit:
+	add 12345 0 @randinc			#Increment is initialized
+	add 0 @time @rndnxt				#Seed is initialized
+	not 0 @randmod
+	rs @randmod 1 @randmod		#Modulus is initialized
+	add 11035 0 @randmul
+	mul @randmul 1000 @randmul
+	add @randmul 152 @randmul
+	mul @randmul 100 @randmul
+	add @randmul 45 @randmul 	#Multiplier is initialized
+	jrt nextrandom						#Start up the generator to get initial value ready
+ret
+
+#Generate the next random number
+nextrandom:
+	mul @rndnxt @randmul @rndnxt
+	add @rndnxt @randinc @rndnxt
+	and @rndnxt @randmod @rndnxt
+	rs @rndnxt 16 @nextrand
+ret
+
+#-------------
+# Snake Game
+#-------------
+
+#Initialize the snake screen
+screeninit:
+	jrt clearscreen
+	add 0 0 @lineptr
+	jrt fillhline
+	jrt fillvline
+	add 0 31 @lineptr
+	jrt fillhline
+	jrt fillvline
+ret
+
+#Initialize the snake information
+snakeinit:
+	add 5 0 @snakex
+	add 5 0 @snakey
+	#add @snakex 0 @pixx
+	#add @snakey 0 @pixy
+	#jrt pixon
+	add 1 0 @snakelength
+	add 4 0 @snakedir			#1 is up, 2 left, 3 down, 4 right
+	add 2000 0 @snakefrontx	#This is a pointer to memory!
+	add 3000 0 @snakefronty	#Also pointer!
+	jrt putfood
+ret
+
+#Store current snake position in array
+snakestore:
+	add @snakex 0 *@snakefrontx	#Store position in array
+	add @snakey 0 *@snakefronty
+	add @snakefrontx 1 @snakefrontx	#Move to next slot in array
+	add @snakefronty 1 @snakefronty
+	beq @snakefrontx 2999 snakestorewrap
+	ret
+	snakestorewrap:	#Wrap around to beginning of array.
+	sub @snakefrontx 999 @snakefrontx
+	sub @snakefronty 999 @snakefronty
+ret
+
+#Attempt to erase the back of the snake
+eraseback:
+	sub @snakefrontx 0 @drawtemp
+	sub @drawtemp @snakelength @drawtemp
+	sub @snakefronty 0 @drawtemp2
+	sub @drawtemp2 @snakelength @drawtemp2
+	bgt @drawtemp 1999 doerase
+	add @drawtemp 999 @drawtemp	#Need to fix up position
+	add @drawtemp2 999 @drawtemp2
+doerase:
+	add 0 *@drawtemp @pixx
+	add 0 *@drawtemp2 @pixy
+	jrt pixoff
+ret
+
+#Get the direction of user input
+getdir:
+	xor @oldbtn b0 @curbtn
+	and @curbtn b0 @curbtn
+	add @snakedir 0 @dirtemp
+	and @curbtn 16 @snakedir
+	rs @snakedir 4 @snakedir
+	beq @snakedir 1 getdirend #up was pressed
+	and @curbtn 32 @snakedir
+	rs @snakedir 5 @snakedir
+	mul @snakedir 2 @snakedir
+	beq @snakedir 2 getdirend #left was pressed
+	and @curbtn 64 @snakedir
+	rs @snakedir 6 @snakedir
+	mul @snakedir 3 @snakedir
+	beq @snakedir 3 getdirend #down was pressed
+	and @curbtn 128 @snakedir
+	rs @snakedir 7 @snakedir
+	mul @snakedir 4 @snakedir #right was pressed
+getdirend:
+	bgt @snakedir 0 getdirendend
+	add @dirtemp 0 @snakedir
+getdirendend:
+	add @curbtn 0 @oldbtn
+ret
+
+#Check if we're eating food currently. Grow if necessary
+checkfood:
+	add 0 0 @didgrow	#Assume no growth
+	beq @snakex @foodx checkfoodx
+	jmp checkfoodend
+checkfoodx:
+	beq @snakey @foody checkfoodgood
+	jmp checkfoodend
+checkfoodgood:	#If we get here, we actually ate food
+	add 0 @foodx @pixx
+	add 0 @foody @pixy
+	jrt pixoff
+	add @snakelength 1 @snakelength
+	add 1 0 @didgrow
+checkfoodend:
+ret
+
+#Try to place food anywhere on the screen
+putfood:
+	jrt nextrandom
+	and @nextrand 31 @checkpixx
+	rs @nextrand 5 @checkpixy
+	and @checkpixy 31 @checkpixy
+	jrt checkpix
+	beq @checkpix 1 putfood
+	add 0 @checkpixx @foodx 
+	add 0 @checkpixy @foody
+	add 0 @foodx @pixx
+	add 0 @foody @pixy
+	jrt pixon
+ret
+
+init:
+	jrt screeninit	#First, initialize the screen
+	jrt randominit	#Now initialize the random number generator
+	jrt snakeinit		#Snake initialization
+	vsync
+	
+snakeloop:
+		jrt snakestore
+		jrt getdir
+		beq 1 @snakedir snakeup
+		beq 2 @snakedir snakeleft
+		beq 3 @snakedir snakedown
+		beq 4 @snakedir snakeright
+	snakeposdone:
+		jrt eraseback
+		jrt checkfood
+		add @snakex 0 @checkpixx
+		add @snakey 0 @checkpixy
+		jrt checkpix
+		beq @checkpix 1 gameover
+		add @snakex 0 @pixx
+		add @snakey 0 @pixy
+		jrt pixon
+		beq @didgrow 0 skipfood
+		jrt putfood
+	skipfood:
+		vsync
+		jrt getdir
+		vsync
+		jrt getdir
+		vsync
+jmp snakeloop
+
+#update snake position section
+snakeup:
+	sub @snakey 1 @snakey
+jmp snakeposdone
+snakeleft:
+	sub @snakex 1 @snakex
+jmp snakeposdone
+snakedown:
+	add @snakey 1 @snakey
+jmp snakeposdone
+snakeright:
+	add @snakex 1 @snakex
+jmp snakeposdone
+
+
+gameover:
+	

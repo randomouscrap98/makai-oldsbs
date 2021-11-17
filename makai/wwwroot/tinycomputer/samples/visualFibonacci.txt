@@ -1,0 +1,30 @@
+#An initial testing program. Let's hope it works...
+
+!@currentptr m3200	!
+!@last1 m3300 		!
+!@last2 m3400 		!
+!@screen m3500 		!
+
+start:			#Init first two fibonacci nums
+add 1 0 v0
+add 1 0 v1
+add 2 0 @currentptr #Init pointer to current vid location
+
+loop:
+sub @currentptr 1 @last1	#These two will be pointers
+sub @currentptr 2 @last2 #to the previous mem locations
+
+add *@last1 *@last2 *@currentptr
+
+mod @currentptr 32 @screen
+add 0 *@currentptr *@screen
+
+vsync
+
+add 1 @currentptr @currentptr #Go to the next screen line
+beq @currentptr 1000 end
+jmp loop
+
+#You don't NEED a label to signify it's the end. The simulator
+#will automatically stop when it reaches the bottom.
+end:

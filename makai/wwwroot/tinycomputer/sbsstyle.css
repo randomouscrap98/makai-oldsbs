@@ -1,0 +1,30 @@
+#saveform 
+{ 
+   margin-bottom: 0;
+}
+#saveform input[type="text"]
+{
+   width: 15rem;
+   max-width: 100%;
+}
+#saveform span
+{
+   color: #888;
+   font-size: 0.8em;
+   font-family: monospace;
+   margin: 0 0.3em;
+   vertical-align: middle;
+}
+#saveform a
+{
+   display: inline-block;
+   padding: 0;
+   margin: 0;
+}
+.CodeMirror
+{
+   min-height: 3em;
+   height: 30vh;
+   height: -webkit-calc(100vh - 12rem - 256px);
+   height: calc(100vh - 12rem - 256px);
+}

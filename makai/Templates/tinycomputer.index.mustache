@@ -1,0 +1,112 @@
+<html>
+<head>
+	<title>Tiny Computer</title>
+	<meta charset="UTF-8">
+	<link rel="shortcut icon" type="image/x-icon" href="{{root}}resource/favicon.ico" />
+	<link rel="stylesheet" href="{{root}}lib/codemirror.css?version={{appversion}}">
+	<link rel="stylesheet" href="{{root}}page.css?version={{appversion}}">
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+   <!-- These are two things I added for smileBASIC Source integration. Remove
+        if you're porting this thing around -->
+   <link rel="stylesheet" href="{{root}}sbsstyle.css?version={{appversion}}">
+   <script src="{{root}}sbsscript.js?version={{appversion}}"></script>
+	<script src="{{root}}lib/codemirror.js?version={{appversion}}"></script>
+	<script src="{{root}}addon/mode/simple.js?version={{appversion}}"></script>
+	<script src="{{root}}addon/selection/active-line.js?version={{appversion}}"></script>
+	<script src="{{root}}simplemode.js?version={{appversion}"></script>
+	<script src="{{root}}engine.js?version={{appversion}}"></script>
+	<script src="{{root}}decode.js?version={{appversion}}"></script>
+	<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+	<script src="https://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+	<script>
+		$( function(){ $("#buttonbox").draggable(); } );
+		$( function(){ $("#statusbox").draggable(); } );
+		$( function(){ $("#debugbox").draggable(); } );
+		$( function(){ $("#screencontainer").draggable(); } );
+		
+		var directionCodes=new Array(33,34,35,36,37,38,39,40);
+		$(document).keydown(function(e) 
+		{
+			var key = e.which;
+			if($.inArray(key,directionCodes) > -1) 
+			{
+				e.preventDefault();
+				//return false;
+			}
+			return true;
+		});
+
+		window.addEventListener("load", initialize);
+	</script>
+  
+</head>
+<body>
+	<div id="buttonbox" class="floatbox">
+		<button type="button" onclick="loadCode()" class="actionbutton">Load Code/Halt</button>
+		<button type="button" onclick="runPause()" class="actionbutton">Run/Pause</button>
+		<button type="button" onclick="restart()" class="actionbutton">Restart</button>
+      <input type="range" id="contrastSetting" oninput="setOpacities()"
+         class="actionbutton" value="80">
+	</div>
+	<div id="statusbox" class="floatbox">
+		<div class="statuslight">
+			<img id="wimg" src="/tinycomputer/resource/status_off.png" height="20" width="20"/>
+			<p>W</p>
+		</div>
+		<div class="statuslight">
+			<img id="aimg" src="/tinycomputer/resource/status_off.png" height="20" width="20"/>
+			<p>A</p>
+		</div>
+		<div class="statuslight">
+			<img id="simg" src="/tinycomputer/resource/status_off.png" height="20" width="20"/>
+			<p>S</p>
+		</div>
+		<div class="statuslight">
+			<img id="dimg" src="/tinycomputer/resource/status_off.png" height="20" width="20"/>
+			<p>D</p>
+		</div>
+		<div class="statuslight">
+			<img id="upimg" src="/tinycomputer/resource/status_off.png" height="20" width="20"/>
+			<p>▲</p>
+		</div>
+		<div class="statuslight">
+			<img id="leftimg" src="/tinycomputer/resource/status_off.png" height="20" width="20"/>
+			<p>◄</p>
+		</div>
+		<div class="statuslight">
+			<img id="downimg" src="/tinycomputer/resource/status_off.png" height="20" width="20"/>
+			<p>▼</p>
+		</div>
+		<div class="statuslight">
+			<img id="rightimg" src="/tinycomputer/resource/status_off.png" height="20" width="20"/>
+			<p>►</p>
+		</div>
+		<div class="statuslight">
+			<img id="loadimg" src="/tinycomputer/resource/status_off.png" height="20" width="20"/>
+			<p>L</p>
+		</div>
+		<div class="statuslight">
+			<img id="runimg" src="/tinycomputer/resource/status_off.png" height="20" width="20"/>
+			<p>R</p>
+		</div>
+	</div>
+	<div id="debugbox" class="floatbox">
+		<form style="padding:0px;margin:0px;" action="return false;">
+			<input style="width: 100%;" type="number" id="memoryloc" onchange="tryGetMemory()">
+			<input style="width: 100%;" type="number" id="memoryval" readonly>
+			<p>-= Memory Check =-</p>
+		</form>
+	</div>
+   <div id="screencontainer">
+      <!--<canvas id="screen0"></canvas>
+      <canvas id="screen1"></canvas>
+      <canvas id="screen2"></canvas>
+      <canvas id="screen3"></canvas>-->
+   </div>
+	<div id="editorblock">
+		<textarea id="editor"></textarea>
+	</div>
+	<a href="/tinycomputer/help.txt">A minimal help document</a>
+</body>
+
+</html>

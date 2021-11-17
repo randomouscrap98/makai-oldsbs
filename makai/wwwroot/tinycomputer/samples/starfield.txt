@@ -1,0 +1,142 @@
+#A hastily (and poorly) written "sideways starfield" example.
+#Most of this code isn't even used.
+
+jmp begin
+
+!@loopcount m1000  !
+
+!@time      m65535 ! #This actually does hold unix time
+
+#Drawing variables
+!@lineptr   m65534 ! #Where to place a line (pointer)
+!@drawtemp  m65533 ! #A temporary variable for the draw functions
+!@drawtemp2 m65532 ! #Another temp variable for drawing
+!@pixx      m65531 ! #Where to place pixel (x dimension)
+!@pixy      m65530 ! #Where to place pixel (y dimension)
+!@checkpix  m65523 ! #The return value for checkpix
+!@checkpixx m65522 ! #The x value to check
+!@checkpixy m65521 ! #The y value to check
+
+#Random variables
+!@nextrand  m65528 ! #Next random number (gen with random function)
+!@randmul   m65527 ! #The multiplier for the lcg
+!@randmod   m65526 ! #The modulus for the lcg
+!@randinc   m65525 ! #The increment for the lcg
+!@rndnxt    m65524 ! #The internal next random (don't use it)
+
+#------------------
+# Screen stuff
+#------------------
+
+#When called, this will clear the screen
+clearscreen:
+	add 0 0 @drawtemp  #using drawtemp as a pointer
+	clearscreenloop:
+		add 0 0 *@drawtemp							#Clear current row
+		add 1 @drawtemp @drawtemp				#Go to next video line
+		beq @drawtemp 32 clearscreenend	#Stop when we reach the bottom
+		jmp clearscreenloop
+	clearscreenend:
+ret
+
+#Fill a horizontal line based on the value in @hlineptr
+fillhline:
+	add 0 0 @drawtemp
+	not @drawtemp *@lineptr
+ret
+
+#Fill a vertical line based on the value in @lineptr
+fillvline:
+	add 0 0 @drawtemp				#Which row we're on (start at 0)
+	add 1 0 @drawtemp2			 					#These two lines create a value
+	ls @drawtemp2 @lineptr @drawtemp2	#which is the line mask for one row
+	fillvlineloop:
+		or @drawtemp2 *@drawtemp *@drawtemp
+		add 1 @drawtemp @drawtemp
+		beq @drawtemp 32 fillvlineend
+		jmp fillvlineloop
+	fillvlineend:
+ret
+
+#Return 1 in checkpix if pixel at checkpixx,checkpixy is set
+checkpix:
+	add 0 *@checkpixy @checkpix
+	rs @checkpix @checkpixx @checkpix
+	and @checkpix 1 @checkpix
+ret
+
+#Turn on pixel pixx, pixy
+pixon:
+	ls 1 @pixx @drawtemp
+	or *@pixy @drawtemp *@pixy
+ret
+
+#Turn off pixel pixx, pixy
+pixoff:
+	ls 1 @pixx @drawtemp
+	not @drawtemp @drawtemp
+	and *@pixy @drawtemp *@pixy
+ret
+
+!@screenshift m65400 !	#Variable for shifting da screen
+!@ssskip      m65399 !
+!@ssofs       m65398 !
+
+#------------------
+# Random Generator
+#------------------
+
+#Initialize the random number generator
+randominit:
+	add 12345 0 @randinc			#Increment is initialized
+	add 0 @time @rndnxt				#Seed is initialized
+	not 0 @randmod
+	rs @randmod 1 @randmod		#Modulus is initialized
+	add 11035 0 @randmul
+	mul @randmul 1000 @randmul
+	add @randmul 152 @randmul
+	mul @randmul 100 @randmul
+	add @randmul 45 @randmul 	#Multiplier is initialized
+	jrt nextrandom						#Start up the generator to get initial value ready
+ret
+
+#Generate the next random number
+nextrandom:
+	mul @rndnxt @randmul @rndnxt
+	add @rndnxt @randinc @rndnxt
+	and @rndnxt @randmod @rndnxt
+	rs @rndnxt 16 @nextrand
+ret
+
+
+screenshift:
+	add @ssofs 0 @screenshift
+	screenshiftloop:
+		rs *@screenshift 1 *@screenshift
+		add @screenshift @ssskip @screenshift
+	bgt 32 @screenshift screenshiftloop
+ret
+
+begin:
+	jrt randominit	#Now initialize the random number generator
+	vsync
+loop:
+	add 0 0 @ssofs
+	add 1 0 @ssskip
+	jrt screenshift
+	add 2 0 @ssskip
+	jrt screenshift
+	add 1 0 @ssofs
+	add 4 0 @ssskip
+	jrt screenshift
+	jrt screenshift
+	add 0 0 @loopcount
+	pixrepeat:
+		jrt nextrandom
+		and @nextrand 31 @pixy
+		add 31 0 @pixx
+		jrt pixon
+		add @loopcount 1 @loopcount
+	bne @loopcount 1 pixrepeat
+	vsync
+jmp loop

@@ -1,0 +1,161 @@
+------------------
+Example programs:
+------------------
+-A fibonacci visualizer: 
+  https://makai.smilebasicsource.com/tinycomputer/samples/visualFibonacci.txt
+-Simple snake: 
+  https://makai.smilebasicsource.com/tinycomputer/samples/snake.txt
+
+To try an example program, just copy and paste the
+text into the editor.
+
+--------------------------
+Help with this reference:
+--------------------------
+ a: Any value
+ s: Storage value only (v, m, *m)
+ l: A label
+ op: An operation
+
+-----------------------
+Instruction reference:
+-----------------------
+
+**All instructions**
+
+  add a a s
+  sub a a s
+  mul a a s
+  div a a s
+  mod a a s
+  and a a s
+  or  a a s
+  xor a a s
+  rs  a a s
+  ls  a a s
+  not a s
+  beq a a l
+  bgt a a l
+  bne a a l
+  jmp l
+  jrt l
+  ret
+  l:
+  vsync
+  
+  
+**Operands**
+
+  v0-v31: Video memory (64 bit values, only lower 32 bits used) (also accessible through m0-m31)
+  m32-m65535: RAM (64 bit values) (NOTE: video memory is basically m0-m31)
+  -32,768 to 32,767: A standard value
+  
+  
+**Special Operands**
+
+  b0:  Button memory (8 bits - first 4 bits are WASD, next 4 are UDLR)
+  *value: Access memory at index (value). Allows programmatic access 
+          of video and regular memory. Works like dereferencing a pointer.
+		  Example: If m888 holds the value 30, then *m888 would actually
+		  access m30.
+  m65535: This memory location will hold Unix time.
+          Writing to this memory location is discouraged.
+  m65526-m65529: Frequency channels for sound output. There is 1 channel each for
+          square, triangle, sawtooth, and noise (in that order). The
+          frequencies are times 100, so if you want to play a frequency of
+          440HZ, you should actually use a value of 44000. Sound is only played
+          on vsync. Changing the frequency by less than 1 semitone in one frame 
+          will cause a slide on most browsers.
+  m65522-m65525: Volume channels for sound output. 100 = max, 0 = nothing.
+          Volume lines up with channels.
+		  
+**Math operations**
+
+  format: op a a s
+  operations: add, sub, mul, div, mod, and, or, xor, rs, ls
+  explanation: Perform the operation "op" on first two operands 
+               and store result in the third operand.
+
+  format2: op a s
+  operations: not
+  explanation: Perform the operation "op" on the first operand and
+               store the result in the second.
+  
+  
+**Logic operations**
+
+  beq a a l: Branch to label l if first two operands are the same
+  bne a a l: Same as beq but branches if they're not the same
+  bgt a a l: Branch to label if first operand greater than second
+  jmp l: Unconditionally jump to label l
+  jrt l: Jump to label l, but place position on managed stack so a subsequent ret
+			will return you to the place jrt was called
+  ret: Return to the last place jrt was called.
+  l:: Define label l
+  vsync: Suspend code and wait for screen refresh
+
+  
+**Comments**
+
+  #: Begins a comment. Comments go to the end of the line.
+  
+**Macros**
+
+  !@name code !: Define a macro named name
+  @name: Use macro
+  
+  Be VERY CAREFUL when using macros. If you define a label within a macro,
+  you won't be able to use that macro more than once, as the label will be
+  defined multiple times. Macros are direct substitution; there are no
+  parameters
+  
+**Examples**
+
+  add m1 m2 m3     -  Add RAM contents in slots 1 and 2, then store the result in slot 3
+  sub v0 66 v0     -  Subtract 66 from video memory slot 0 and store it back into slot 0
+  beq b0 0 BUTTS   -  Branch to label "BUTTS" if the button memory is 0
+  MONKEYS:         -  Define a label "MONKEYS" (NOTE: doesn't have to be capitalized)
+  add 10 *m99 *m99 -  Treat m99 as a pointer into memory and dereference it to access
+                       the real memory location. If m99 stores 150, you'll actually access
+					   m150 using *m99. If you have no idea why you would ever use this,
+					   you don't have to! It's not important unless you need to access
+					   memory through a created value.
+
+---------------------
+Saving and Loading: 
+---------------------
+This version of Tiny Computer no longer has saving and loading. You may find a way
+to hack the cookies and such to get it to appear working again, but it will NOT 
+actually work. Historically, your files were saved to the old smilebasicsource
+system, but that system doesn't exist anymore. 
+
+If you would like to use tinycomputer and you want saving and loading, please feel
+free to contact me (email below), I will be happy to add it back as a different 
+kind of system that doesn't contact old sbs.
+
+-------------------					   
+Acknowledgements:
+-------------------
+-Editor is a CodeMirror editor: http://www.codemirror.net/
+  If you need an editor in your webpage for any reason, CodeMirror is an amazing
+  choice. It was really easy to get set up and it provides a lot of utility 
+  without changing anything. It's also incredibly expandable, so it's great for
+  both quick simple needs as well as complex ones.
+-JQuery was used for a few nitpicky things here and there that I wanted to do.
+  The draggable elements in particular (there may not be anything else).
+  http://jquery.com/
+-W3 schools taught me basically everything about css and javascript. It's silly
+  to credit a website for knowledge, but it's really comprehensive and easy to
+  follow. If you're looking to learn css, html, or javascript, go check out
+  http://www.w3schools.com/
+
+---------
+Contact:
+---------
+-If you're really interested in contacting me for some reason, here's my
+ junkmail email address. I might not get to your response immediately, but
+ I don't actually anticipate any messages:
+  randomouscrap98@aol.com
+
+  
+January, 2015

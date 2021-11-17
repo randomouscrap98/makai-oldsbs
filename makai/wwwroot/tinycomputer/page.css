@@ -1,0 +1,133 @@
+body
+{
+	background-color: #E9EBE4 /*E3EAE6*/;
+	overflow:hidden;
+}
+
+body,html
+{
+	height: 100%;
+}
+
+a
+{
+	padding-left: auto;
+    padding-right: auto;
+	padding-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+    display: block;
+	font-family: "Courier New";
+	font-size: 0.85em;
+	text-align: center;
+}
+
+p
+{
+	font-weight: bold;
+	font-family: "Courier New";
+	font-size: 15px;
+	text-align: center;
+	margin:2px;
+}
+
+.actionbutton
+{
+	padding-left: auto;
+    padding-right: auto;
+    margin-left: auto;
+    margin-right: auto;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+    display: block;
+	font-family: "Courier New";
+	font-size: 0.85em;
+}
+
+#buttonbox
+{
+	top: 10px;
+	left: 10px;
+   text-align: center;
+}
+
+#statusbox
+{
+	top: 175px;
+	left: 10px;
+}
+
+#debugbox
+{
+	top: 245px;
+	left: 10px;
+	/*font-family: "Courier New";
+	font-size: 0.2em;*/
+}
+
+.statuslight
+{
+	float:left;
+}
+
+.floatbox
+{
+	position: fixed;
+	width: 200px;
+	background-color: white;
+	
+	border-style: ridge;
+	border-color: #838986;
+	border-width: 0.5em;
+}
+
+#screencontainer
+{
+	padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+	margin-top: 2em;
+	margin-bottom: 2em;
+    display: block;
+	border-style: ridge;
+	border-color: #838986;
+	border-width: 0.5em;
+   position: relative;
+   width: 256px;
+   height: 256px;
+   background-color: #c0cbbd;
+}
+
+#screencontainer canvas
+{
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 256px;
+   height: 256px;
+   image-rendering: -moz-crisp-edges;
+   image-rendering: crisp-edges;
+   image-rendering: optimizespeed;
+   image-rendering: pixelated;
+}
+
+/*#screen { z-index: 10; }
+#screeng 
+{ 
+   z-index: 9; 
+   opacity: 0.3;
+}*/
+
+#editorblock
+{
+	padding: 0;
+	margin: 2em;
+	display: block;
+	
+	border-style: ridge;
+	border-color: #B3BBB8;
+	border-width: 0.5em;
+}
