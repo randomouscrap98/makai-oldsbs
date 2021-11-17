@@ -106,7 +106,7 @@ public class DrawController : BaseController
         {
             return JsonConvert.DeserializeObject<ArtistData>(await System.IO.File.ReadAllTextAsync(GetArtistDataPath(artistId)));
         }
-        catch(System.IO.FileNotFoundException ex)
+        catch(Exception ex) when (ex is System.IO.FileNotFoundException || ex is System.IO.DirectoryNotFoundException)
         {
             logger.LogError($"Error during artist retrieval: {ex}");
             return null;
@@ -121,6 +121,7 @@ public class DrawController : BaseController
         //Need a folder before writing artist data
         if(!Directory.Exists(folder))
         {
+            logger.LogInformation($"Creating folder {folder} for artist {artistId}");
             Directory.CreateDirectory(folder);
             return true;
         }
@@ -131,6 +132,7 @@ public class DrawController : BaseController
     //Also creates any necessary directories
     protected Task SaveArtistDataAsync(string artistId, ArtistData data)
     {
+        logger.LogInformation($"Saving artist data with {data.drawings.Count} drawings for artist {artistId}");
         var path = GetArtistDataPath(artistId);
         CreateArtistFolder(artistId);
         return System.IO.File.WriteAllTextAsync(path, JsonConvert.SerializeObject(data));
@@ -189,6 +191,8 @@ public class DrawController : BaseController
 
     protected Task SaveDrawingDataAsync(string artistID, string drawingID, string data)
     {
+        logger.LogInformation($"Saving drawing {drawingID}({data.Length} bytes) for artist {artistID}");
+
         //This function doesn't require artist data, we can directly to the data without knowing anything
         var path = GetDrawingPath(artistID, drawingID);
         CreateArtistFolder(artistID);
@@ -201,7 +205,7 @@ public class DrawController : BaseController
             throw new InvalidOperationException($"No folder for artist {data.artistID} with id {folderId}!");
 
         foreach (var child in data.folders[folderId].children)
-            if (data.drawings.ContainsKey(child))
+            if (data.drawings.ContainsKey(child) && data.drawings[child].name == name)
                 return Tuple.Create(child, data.drawings[child]);
         
         return null;
@@ -294,6 +298,8 @@ public class DrawController : BaseController
 
                         //And then just store the new state of the artist with the new junk
                         await SaveArtistDataAsync(data.artistID, artist);
+
+                        result.result = drawingData.Item1;
                     }
                 }
                 else

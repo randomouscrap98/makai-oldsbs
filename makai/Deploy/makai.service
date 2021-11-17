@@ -3,7 +3,7 @@ Description=Makai dotnet (oldsbs-auxiliary)
 
 [Service]
 WorkingDirectory=/var/www/makai
-ExecStart=/var/www/kland/makai --urls "http://localhost:5020"
+ExecStart=/var/www/makai/makai --urls "http://localhost:5020"
 Restart=always
 RestartSec=10
 KillSignal=SIGINT

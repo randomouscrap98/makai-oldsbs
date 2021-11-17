@@ -11,7 +11,7 @@ port=22
 
 # space separated
 copyfolders=Templates
-removefiles=kland.db
+removefiles="ignore drawings"
 
 # Stuff for dotnet
 mtype=linux-x64         # The architecture of the target machine
