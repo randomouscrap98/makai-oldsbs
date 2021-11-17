@@ -107,6 +107,7 @@
          nameInput.setAttribute("type", "text");
          nameInput.setAttribute("placeholder", "Name");
          nameInput.setAttribute("required", "");
+         nameInput.id = "nameInput";
 
          var saveInput = document.createElement("input");
          saveInput.setAttribute("type", "submit");
@@ -135,24 +136,25 @@
          submitForm.appendChild(listInput);
          submitForm.appendChild(clarify);
 
-         $.ajax({
-            type: "GET",
-            url: "/query/request/chatauth",
-            success: function(json)
-            {
-               if(!json.result)
-               {
-                  var nameInput = document.querySelector('#saveform input[type="text"]');
+         //$.ajax({
+         //   type: "GET",
+         //   url: "/query/request/chatauth",
+         //   success: function(json)
+         //   {
+         //      if(!json.result)
+         //      {
+                  //var nameInput = document.querySelector('#saveform input[type="text"]');
+                  //console.log("Nameinput", nameInput);
 
                   if(nameInput)
                   {
-                     nameInput.setAttribute("placeholder", "Not Logged In");
+                     nameInput.setAttribute("placeholder", "Saving/loading is disabled");
                      nameInput.disabled = true;
                   }
-               }
-            },
-            dataType: "json"
-         });
+         //      }
+         //   },
+         //   dataType: "json"
+         //});
          
          document.getElementById("editorblock").appendChild(submitForm);
       }

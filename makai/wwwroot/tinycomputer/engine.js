@@ -13,7 +13,7 @@ var mbuffersize = 65536;
 //Image objects
 var statusImages = [];
 var preImage = new Image();
-preImage.src="resource/status_on.png";
+preImage.src=statusOnSrc;
 
 //Window and file writer
 var w = window;
@@ -55,8 +55,8 @@ addEventListener("keydown", function (e)
 	if(buttonMapping[e.keyCode] != -1)
 		system.bbuffertemp |= buttonMapping[e.keyCode];
 	
-	if(statusImages[e.keyCode] && statusImages[e.keyCode].src.indexOf("resource/status_on.png") == -1)
-		statusImages[e.keyCode].src = "resource/status_on.png";
+	if(statusImages[e.keyCode] && statusImages[e.keyCode].src.indexOf(statusOnSrc) == -1)
+		statusImages[e.keyCode].src = statusOnSrc;
 	
 }, false);
 
@@ -67,8 +67,8 @@ addEventListener("keyup", function (e)
 	if(buttonMapping[e.keyCode] != -1)
 		system.bbuffertemp = (system.bbuffertemp & ~buttonMapping[e.keyCode]);
 	
-	if(statusImages[e.keyCode] && statusImages[e.keyCode].src.indexOf("resource/status_off.png") == -1) 
-		statusImages[e.keyCode].src = "resource/status_off.png";
+	if(statusImages[e.keyCode] && statusImages[e.keyCode].src.indexOf(statusOffSrc) == -1) 
+		statusImages[e.keyCode].src = statusOffSrc;
 	
 }, false);
 
@@ -91,7 +91,7 @@ function clearHaltSystem()
 function setRunning(isRunning)
 {
 	system.running = isRunning;
-	document.getElementById("runimg").src = "resource/status_" + (isRunning ? "on" : "off") + ".png";
+	document.getElementById("runimg").src = isRunning ? statusOnSrc : statusOffSrc;
 	
 	if(!system.running)
 	{
@@ -108,7 +108,7 @@ function setRunning(isRunning)
 function setLoaded(isLoaded)
 {
 	system.loaded = isLoaded;
-	document.getElementById("loadimg").src = "resource/status_" + (isLoaded ? "on" : "off") + ".png";
+	document.getElementById("loadimg").src = isLoaded ? statusOnSrc : statusOffSrc;
 }
 
 //Called at the end of html page load to initialize stuff that 
