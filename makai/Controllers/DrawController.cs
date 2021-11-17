@@ -1,3 +1,4 @@
+using System.Runtime;
 using makai.Interfaces;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -12,29 +13,27 @@ public class DrawControllerConfig
 
 [ApiController]
 [Route("draw")]
-public class DrawController : Controller //: KlandBase
+public class DrawController : BaseController
 {
     protected DrawControllerConfig config;
-    protected IPageRenderer pageRenderer;
 
-    public DrawController(ILogger<DrawController> logger, //KlandDbContext dbContext,
-        DrawControllerConfig config, IPageRenderer pageRenderer) //: base(logger, dbContext)
+    public DrawController(ILogger<DrawController> logger, DrawControllerConfig config, IPageRenderer pageRenderer) 
+        : base(logger, pageRenderer)
     {
         this.config = config;
-        this.pageRenderer = pageRenderer;
     }
 
-    protected Dictionary<string, object> GetDefaultData()
+    [HttpGet()]
+    public async Task<ContentResult> GetIndexAsync([FromQuery]string? nogb, [FromQuery]string? kid)
     {
-        //var adminid = Request.Cookies[AdminIdKey] ?? "";
-        return new Dictionary<string, object>()
-        {
-            { "appversion", GetType().Assembly.GetName().Version?.ToString() ?? "UNKNOWN" },
-            //{ "isgcserver", GCSettings.IsServerGC },
-            //{ "isAdmin", adminid == config.AdminId},
-            //{ AdminIdKey, adminid },
-            //{ PostStyleKey, Request.Cookies[PostStyleKey] ?? "" },
-            { "requestUri", Request.GetDisplayUrl() }
+        //Need to look up threads? AND posts?? wow 
+        var data = GetDefaultData();
+        data["kid"] = kid ?? "";
+        data["nobg"] = nogb ?? "";
+
+        return new ContentResult{
+            ContentType = "text/html",
+            Content = await pageRenderer.RenderPageAsync("draw.index", data)
         };
     }
 

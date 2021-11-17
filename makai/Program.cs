@@ -1,5 +1,7 @@
 using Amazon.S3;
 using makai;
+using makai.Controllers;
+using makai.Interfaces;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,7 +21,11 @@ services.AddCors();
 services.AddDefaultAWSOptions(configuration.GetAWSOptions());
 services.AddAWSService<IAmazonS3>();
 
+//Why are these singletons? They store no state, so why not!
+services.AddSingleton<IPageRenderer, MustacheRenderer>();
+
 AddConfigBinding<RenderConfig>(services, configuration);
+AddConfigBinding<DrawControllerConfig>(services, configuration);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

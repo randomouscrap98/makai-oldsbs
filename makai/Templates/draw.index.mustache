@@ -1,0 +1,505 @@
+<html>
+   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <script src="/draw/randomous.js?v={{appversion}}" ></script>
+    <script src="/draw/randomousCanvas.js?v={{appversion}}" ></script>
+    <script src="/draw/simpledraw2.js?v={{appversion}}" ></script>
+   <script>
+      var drawer;
+      var reloading = false;
+      var originalControlsWidth;
+      var autoSaveKey = "drawingautosave";
+      var settingsKey = "drawsettings";
+      var autoSaveID = 6969;
+      var MaxSaveInterval = 300000;
+      var MinSaveInterval = 5000;
+      function getArtistID()
+      {
+         return document.querySelector('#canvassettings input[name="artistID"]').value;
+      }
+      function saveDrawSettings(settings)
+      {
+         StorageUtilities.WriteSafeCookie(settingsKey, {
+            "width" : settings.elements.width.value,
+            "height" : settings.elements.height.value,
+            "artistID" : settings.elements.artistID.value,
+            "performanceMode" : settings.elements.performanceMode.checked
+         });
+      }
+      function autoSave(automaticID)
+      {
+         var settings = document.getElementById("canvassettings");
+         if(automaticID)
+         {
+            if(settings.elements.performanceMode.checked)
+            {
+               console.trace("Skipping autosave due to performance mode");
+               window.setTimeout(function() { autoSave(automaticID); }, MinSaveInterval);
+               return;
+            }
+            else if(autoSave.halts.indexOf(automaticID) >= 0) 
+            {
+               console.trace("Stopping autosave due to halt");
+               return;
+            }
+         }
+         var string = drawer.drawer.ToString();
+         localStorage.setItem(autoSaveKey, string);
+         console.debug("Autosaved drawing. Size: " + string.length);
+         if(!automaticID) return;
+         window.setTimeout(function() { autoSave(automaticID); }, 
+            MathUtilities.MinMax(Math.floor(Math.pow(string.length, 0.93)), MinSaveInterval, MaxSaveInterval));
+      }
+      autoSave.halts = [];
+      function setupSettingsForm()
+      {
+         var settings = document.getElementById("canvassettings");
+         settings.elements.artistID.onfocus = function(e)
+            { settings.elements.artistID.type = "text"; };
+         settings.elements.artistID.onblur = function(e)
+            { settings.elements.artistID.type = "password"; };
+         var savedSettings = StorageUtilities.ReadSafeCookie(settingsKey);
+         settings.elements.performanceMode.onclick = function(e)
+         { 
+            var perfMode = settings.elements.performanceMode.checked;
+            saveDrawSettings(settings); 
+            drawer.SetInfoDisplayed(!perfMode);
+         };
+         if(savedSettings)
+         {
+            settings.elements.width.value = savedSettings.width;
+            settings.elements.height.value = savedSettings.height;
+            settings.elements.artistID.value = savedSettings.artistID;
+            settings.elements.performanceMode.checked = savedSettings.performanceMode;
+         }
+         else
+         {
+            settings.elements.width.value = 250;
+            settings.elements.height.value = 250;
+            settings.elements.artistID.value = "Artist_" + MathUtilities.NewGuid().substr(0, 8);
+            settings.elements.performanceMode.checked = false;
+            saveDrawSettings(settings);
+         }
+         settings.onsubmit = function(e)
+         {
+            e.preventDefault();
+            UXUtilities.Confirm("Are you sure you want to reload? You'll lose any unsaved progress!",
+               function(confirmed)
+               {
+                  if(confirmed)
+                  {
+                     reloading = true;
+                     autoSave.halts.push(autoSaveID);
+                     saveDrawSettings(settings);
+                     localStorage.setItem(autoSaveKey, "");
+                     location.reload();
+                  }
+               });
+            //if(confirm("Are you sure you want to reload? You'll lose any unsaved progress!"))
+            //{
+            //   reloading = true;
+            //   autoSave.halts.push(autoSaveID);
+            //   saveDrawSettings(settings);
+            //   localStorage.setItem(autoSaveKey, "");
+            //   location.reload();
+            //}
+         };
+      }
+      function setupDrawer()
+      {
+         var savedSettings = StorageUtilities.ReadSafeCookie(settingsKey);
+         HTMLUtilities.InsertFirst(drawer.Generate(savedSettings.width,savedSettings.height,4,15), document.body);
+         drawer.SetInfoDisplayed(!savedSettings.performanceMode);
+      }
+      function setupManagement()
+      {
+         var manageToggle = document.getElementById("managementtoggle");
+         var management = document.getElementById("management");
+         drawer.container.appendChild(management); 
+         drawer.container.appendChild(manageToggle);
+         management.style.display = "none";
+         manageToggle.removeAttribute("data-show");
+         manageToggle.addEventListener("click", function(e)
+         {
+            if(manageToggle.hasAttribute("data-show"))
+            {
+               management.style.display = "none";
+               manageToggle.removeAttribute("data-show");    
+            }
+            else
+            {
+               management.style.display = "";
+               manageToggle.setAttribute("data-show", "true");    
+            } 
+         });
+         var saveForm = document.getElementById("canvassave");
+         var saveDrawing = function(drawingName)
+         {
+            var data = new FormData();
+            data.append("artistID", getArtistID());
+            data.append("drawing", drawer.drawer.ToString()); 
+            data.append("name", drawingName);
+            data.append("action", "save"); 
+            RequestUtilities.XHRSimple("manager", function(response)
+            {
+               var output = JSON.parse(response);
+               if(output.result)
+               {
+                  //alert("Uploaded image. ID: " + output.result);
+                  UXUtilities.Toast("Uploaded image '" + drawingName + "'. ID: " + output.result);
+                  refreshFileList();
+               }
+               else
+               {
+                  UXUtilities.Alert("Error while uploading! Errors:\n" + output.errors.join("\n"));
+                  //alert("Error while uploading! Errors:\n" + output.errors.join("\n"));
+               }
+            }, data);
+         };
+         saveForm.onsubmit = function(e)
+         {
+            e.preventDefault();
+
+            var drawingName = saveForm.elements.name.value;
+            var fileList = getCurrentFileList();
+
+            if(saveForm.elements.appendnumber.checked)
+               drawingName += " #" + String(fileList.length).padStart(3, "0");
+
+            if(fileList.indexOf(drawingName) >= 0)
+            {
+               UXUtilities.Confirm("There is already a file with name '" +
+                  drawingName + "'. Do you really want to overwrite it?",
+                  function(confirm)
+                  {
+                     if(confirm) saveDrawing(drawingName);
+                  });
+            }
+            else
+            {
+               saveDrawing(drawingName);
+            }
+
+         };
+
+         document.getElementById("reloadfiles").addEventListener("click", refreshFileList);
+         document.getElementById("permalink").addEventListener("click", permalinkDrawing.callBind(null));
+      }
+      function fixButtonImages()
+      {
+         var tools = document.querySelectorAll(".toolbox button");
+         var actions = document.querySelectorAll(".actions button");
+         var svgs = [ "leftArrow.svg", "rightArrow.svg", "hardcircle.svg", "hardsquare.svg", 
+            "normalcircle.svg", "normalsquare.svg",
+            "eraser.svg", "brush.svg", "slowbrush.svg", "spray.svg",
+            "line.svg", "squareOutline.svg", "bucket.svg", "full.svg", "dropper.svg",
+            "move.svg", //Add tools HERE, the last tool is ALWAYS clear!
+            "clear.svg"];
+         for(var i = 0; i < tools.length; i++)
+         {
+            if(svgs[i])
+            {
+               var img = new Image();
+               img.src = "/draw/" + svgs[i];
+               tools[i].appendChild(img);
+            }
+         }
+         svgs = ["undo.svg", "redo.svg", "zoomout.svg", "zoomin.svg",
+            "center.svg", "fullscreen.svg"];
+         for(var i = 0; i < actions.length; i++)
+         {
+            var img = new Image();
+            img.src = "/draw/" + svgs[i];
+            actions[i].appendChild(img);
+         }
+      }
+      function fixDrawerSize()
+      {
+         drawer.maxWidth = window.innerWidth;
+         drawer.maxHeight = window.innerHeight;
+      }
+      function loadDrawing(id)
+      {
+         console.log("Loading drawing: " + id);
+         var data = new FormData();
+         data.append("artistID", getArtistID());
+         data.append("drawingID", id);
+         data.append("action", "load");
+         RequestUtilities.XHRSimple("manager", function(response)
+         {
+            try
+            {
+               drawer.drawer.FromString(JSON.parse(response).result, function() 
+               {
+                  loadDrawingComplete();
+               });
+            }
+            catch(ex)
+            {
+               UXUtilities.Alert("Couldn't load drawing: " + ex);
+               //alert("Couldn't load drawing: " + ex);
+            }
+         }, data);
+      }
+      function loadDrawingComplete()
+      {
+         CanvasUtilities.AutoStyle(drawer.drawer._canvas);
+         var settings = document.getElementById("canvassettings");
+         settings.elements.width.value = drawer.drawer._canvas.width;
+         settings.elements.height.value = drawer.drawer._canvas.height;
+         saveDrawSettings(settings);
+         drawer.ResetNavigation();
+      }
+      function getCurrentFileList()
+      {
+         var fileElements = document.querySelectorAll("#filelist a.file"); 
+         var files = [];
+         for(var i = 0; i < fileElements.length; i++)
+            files.push(fileElements[i].getAttribute("title"));
+         return files;
+      }
+      function refreshFileList()
+      {
+         var list = document.getElementById("filelist");
+         list.innerHTML = "";
+         var artistID = getArtistID();
+         var data = new FormData();
+         data.append("artistID", artistID);
+         data.append("action", "list");
+         RequestUtilities.XHRSimple("manager", function(response)
+         {
+            //console.debug("Response for file list refresh: \n" + response);
+            var json = JSON.parse(response);
+            if(json && json.result)
+            {
+               var drawings = json.result.drawings;
+               for(var key in drawings)
+               {
+                  if(drawings.hasOwnProperty(key))
+                  {
+                     var file = document.createElement("a");
+                     var keyCopy = key;
+                     file.className = "file";
+                     file.href="#";
+                     file.innerHTML = drawings[key].name;
+                     file.setAttribute("data-id", key);
+                     file.setAttribute("title", drawings[key].name);
+                     file.addEventListener("click", function(e)
+                     {
+                        //if(confirm("Are you sure you want to load this drawing? " +
+                        //   "You'll lose any unsaved progress!"))
+                        //{
+                        //   loadDrawing(e.target.getAttribute("data-id"));
+                        //}
+                        UXUtilities.Confirm("Are you sure you want to load this drawing? " +
+                           "You'll lose any unsaved progress!", function(loaded)
+                           {
+                              if(loaded) loadDrawing(e.target.getAttribute("data-id"));
+                           });
+                     });
+                     HTMLUtilities.InsertFirst(file, list);
+                     //list.appendChild(file);
+                  }
+               } 
+            }
+            else
+            {
+               console.log("Error while refreshing: " + json.errors.join(" - "));
+            }
+         }, data);
+      }
+      function permalinkDrawing(callback)
+      {
+         callback = callback || function(r) { window.open(r); };
+         var data = new FormData();
+         //console.log(drawer.drawer._canvas.toDataURL("image/png"));
+         data.append("raw", drawer.drawer._canvas.toDataURL("image/png"));
+         data.append("bucket", getArtistID());
+         RequestUtilities.XHRSimple("http://kland.smilebasicsource.com/uploadimage", 
+            callback, data);
+      }
+      window.addEventListener("load", function()
+      {
+         drawer = new SimpleDraw();
+         fixDrawerSize();
+         setupSettingsForm();
+         setupDrawer();
+         setupManagement();
+         drawer.FixToolStyling();
+         drawer.ResetNavigation();
+         fixButtonImages();
+         refreshFileList();
+         var previousDrawing = localStorage.getItem(autoSaveKey);
+         if(previousDrawing) 
+         {
+            drawer.drawer.FromString(previousDrawing, function() 
+            {
+               loadDrawingComplete();
+               autoSave(autoSaveID);
+            });
+         }
+         else
+         {
+            autoSave(autoSaveID);
+         }
+      });
+      window.addEventListener("resize", fixDrawerSize);
+      window.addEventListener("message", function(e)
+      {
+         if(e.data.uploadImage)
+         {
+            permalinkDrawing(function(r)
+            {
+               e.source.postMessage({link:r,type:"uploadImage"},"*"); 
+            }); 
+         }
+         else if(e.data.setBackground)
+         {
+            //document.body.style.backgroundColor = e.data.setBackground;
+            drawer.easel.style.backgroundColor = e.data.setBackground;
+         }
+      });
+      window.addEventListener("unload", function(e)
+      {
+         if(!reloading) 
+            autoSave(); 
+      });
+   </script>
+   <style>
+      body { 
+         /*background-color: #CCC; */
+         padding: 0px; 
+         margin: 0px;
+         border: none;
+         position: relative;
+         width: 100%;
+         height: 100%;
+         font-family: sans-serif;
+      }
+      canvas.draw { background-image: url("/draw/grid.png"); }
+      .simpledraw .layers canvas { background-image: url("/draw/grid.png"); background-size: 4px;}
+      .simpledraw .controls button img {
+         width: 100%;
+         height: 100%; 
+         padding: 4px;
+         box-sizing: border-box;
+         align: middle;
+         -moz-user-select: none;
+         -webkit-user-drag: none;
+         -webkit-user-select: none;
+         -ms-user-select: none;
+         user-drag: none; 
+         user-select: none;
+      }
+      .simpledraw .widthpicker button img {
+         padding: 1px;
+      }
+      {{#nobg}}
+      .simpledraw .easel { background-color: rgba(0,0,0,0);}
+      {{/nobg}}
+      .simpledraw .toolbox button, .simpledraw .actions button { font-size: 0; }
+      .simpledraw .toolbox button[data-shape]:not([data-selected]) { display: none;}
+      .simpledraw button:disabled img { filter: invert(50%); }
+      .simpledraw .controls > * {vertical-align: top;}
+      .simpledraw .links { font-size: 0.9rem; }
+      #management, #managementtoggle {
+         position: absolute;
+         right: 0;
+         bottom: 0;
+         margin: 0;
+         display: block;
+         font-size: 0.9rem;
+      }
+      #management {
+         z-index: 2;
+         background-color: #BBB;
+         padding: 5px;
+         max-width: 90vw;
+         width: 500px;
+      }
+      #managementtoggle {
+         z-index: 3; 
+         padding: 0.025em 0.3em;
+      }
+      #loadarea button {
+         padding: 0.025em 0.3em; 
+      }
+      #management .fullblock { 
+         display: block;
+         margin: 0.3rem 0rem;
+         width: 100%;
+         padding: 0;
+         font-size: 0;
+      }
+      #management * { font-size: 0.9rem; vertical-align: middle; overflow: hidden;}
+      #management input[type="submit"] { text-overflow: ellipsis; overflow: hidden; }
+      #management input[type="checkbox"] { width: 1.0em; height: 1.0em; margin-right: 0.2em;}
+      #management label { padding: 0.1em 0.2em; display: inline-block;box-sizing: border-box;}
+      #canvassettings input { width: 15%; }
+      #canvassettings input[type="submit"] { width: 40%; float: right;}
+      #canvassettings input[name="artistID"] { width: 70%; }
+      #canvassettings label {background-color: #DDD; margin-left: 1px;}
+      #canvassave input[name="name"] { width: 55%; }
+      #canvassave input[name="appendnumber"] { width: 0.9rem; height: 0.9rem; margin: 0 0.1em; }
+      #canvassave label { 
+         width: 10%; 
+         text-align: center;
+      }
+      #canvassave input[type="submit"] { width: 35%;  }
+      #filelist {
+         display: block;
+         background-color: #FFC; 
+         width: 100%;
+         height: 150px;
+         overflow-y: scroll;
+      }
+      #filelist a:visited, #filelist a:link {
+         color: #4286f4; 
+         display: inline-block;
+         width: 33%; 
+         padding: 3px 5px;
+         box-sizing: border-box;
+         overflow: hidden;
+         text-overflow: ellipsis;
+         white-space: nowrap;
+         font-family: monospace;
+         text-decoration: none;
+         font-size: 0.8rem;
+      }
+      #filelist a:hover {
+         background-color: #c9ddff; 
+      }
+   </style>
+   {{#kid}}
+   <link rel="stylesheet" type="text/css"' href="https://kland.smilebasicsource.com/lookup?contentonly=1&pid={{kid}}&type=text%2Fcss">
+   {{/kid}}
+   <!--<link rel="stylesheet" type="text/css" href="krita-dark-2.css?version=jellyfish">-->
+   </head>
+   <body>
+      <div id="management">
+         <form id="canvassettings" action="javascript:void(0);" class="fullblock">
+            <input name="width" placeholder="Width">
+            <input name="height" placeholder="Height">
+            <input name="artistID" type="password" placeholder="Secret Artist ID" class="longinput" 
+             title="Secret Artist ID">
+            <label><input name="performanceMode" type="checkbox" title="Disables some things to increase performance">Performance Mode</label>
+            <input type="submit" value="Reload / Set Settings">
+         </form>
+         <div id="storagesettings">
+            <form id="canvassave" action="javascript:void(0);" class="fullblock">
+               <input name="name" placeholder="Drawing Name">
+               <label title="Include drawing number for uniqueness"><input 
+                  name="appendnumber" type="checkbox" checked="">#</label>
+               <input type="submit" value="Save Drawing">
+            </form>
+            <div id="loadarea">
+               <div id="filelist" class="fullblock">
+               </div>
+               <button id="reloadfiles">Refresh List</button>
+               <button id="permalink">Upload to kland</button>
+            </div> 
+         </div>
+      </div>
+      <button id="managementtoggle">Manage</button>
+   </body>
+</html>
