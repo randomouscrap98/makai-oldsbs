@@ -1,4 +1,5 @@
 using Amazon.S3;
+using makai;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,8 @@ void AddConfigBinding<T>(IServiceCollection services, IConfiguration config) whe
 services.AddCors();
 services.AddDefaultAWSOptions(configuration.GetAWSOptions());
 services.AddAWSService<IAmazonS3>();
+
+AddConfigBinding<RenderConfig>(services, configuration);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
