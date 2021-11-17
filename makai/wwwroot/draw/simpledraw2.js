@@ -683,8 +683,8 @@ SimpleDraw.prototype.RefreshLocation = function()
    //console.log(rect);
    console.trace("Refreshing location. x: " + this.x + ", y: " + this.y +
       ", easelw: " + rect.width + ", easelh: " + rect.h);
-   this.canvasContainer.style.top = (cont.height - rect.height) / 2 + this.y + "px";
-   this.canvasContainer.style.left = (cont.width - rect.width) / 2 + this.x + "px";
+   this.canvasContainer.style.top = "calc(50% - " + rect.width + "px)";
+   this.canvasContainer.style.left = "calc(50% - " + rect.height + "px)";
 };
 
 SimpleDraw.prototype.ResetNavigation = function()
