@@ -2,7 +2,7 @@
 
 cd ..
 
-name="kland"
+name="makai"
 phost=csanchez@smilebasicsource.com   # The production server (and user to connect)
 pfolder="/var/www/${name}"            # The REMOTE location to PLACE all files
 rdf="rl"
