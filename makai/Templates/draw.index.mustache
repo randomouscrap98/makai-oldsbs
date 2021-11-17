@@ -310,12 +310,18 @@
       }
       function permalinkDrawing(callback)
       {
-         callback = callback || function(r) { window.open(r); };
+         callback = callback || function(r) { 
+            if(r.indexOf("http") == 0)
+               window.open(r); 
+            else
+               alert("Kland failed (" + r.status + "): " + r);
+         };
          var data = new FormData();
-         //console.log(drawer.drawer._canvas.toDataURL("image/png"));
-         data.append("raw", drawer.drawer._canvas.toDataURL("image/png"));
+         var raw = drawer.drawer._canvas.toDataURL("image/png");
+         console.log(raw);
+         data.append("raw", raw);
          data.append("bucket", getArtistID());
-         RequestUtilities.XHRSimple("http://kland.smilebasicsource.com/uploadimage", 
+         RequestUtilities.XHRSimple("https://kland.smilebasicsource.com/uploadimage", 
             callback, data);
       }
       window.addEventListener("load", function()
