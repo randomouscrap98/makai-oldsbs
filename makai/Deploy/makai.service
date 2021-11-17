@@ -1,0 +1,16 @@
+[Unit]
+Description=Makai dotnet (oldsbs-auxiliary)
+
+[Service]
+WorkingDirectory=/var/www/makai
+ExecStart=/var/www/kland/makai --urls "http://localhost:5020"
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=makai
+User=www-data
+# Environment=ASPNETCORE_ENVIRONMENT=Production
+# Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+
+[Install]
+WantedBy=multi-user.target

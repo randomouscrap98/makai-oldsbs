@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "makai", "makai\makai.csproj", "{04B90F6E-47DB-469C-9500-2782008284C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "makai.test", "makai.test\makai.test.csproj", "{AD532834-3F20-4716-89E7-41FC9A12225F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{04B90F6E-47DB-469C-9500-2782008284C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04B90F6E-47DB-469C-9500-2782008284C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04B90F6E-47DB-469C-9500-2782008284C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04B90F6E-47DB-469C-9500-2782008284C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD532834-3F20-4716-89E7-41FC9A12225F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD532834-3F20-4716-89E7-41FC9A12225F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD532834-3F20-4716-89E7-41FC9A12225F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD532834-3F20-4716-89E7-41FC9A12225F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
