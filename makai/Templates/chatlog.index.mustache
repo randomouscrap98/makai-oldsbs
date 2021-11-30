@@ -1,0 +1,35 @@
+<html>
+   <head>
+      <meta name="viewport" content="width=device-width,maximum-scale=1">
+      <style>
+input[type="number"] {
+   width: 3em;
+}
+.error {
+    color: red;
+}
+      </style>
+   </head>
+   <body>
+      <form>
+         <input name="search" type="text" placeholder="grep search" value="{{get.search}}">
+         <input name="filefilter" type="text" placeholder="file pattern" value="{{get.filefilter}}">
+         <span># Before:</span>
+         <input name="before" type="number" min="0" max="25" value="{{get.before}}">
+         <span># After:</span>
+         <input name="after" type="number" min="0" max="25" value="{{get.after}}">
+         <input type="submit">
+      </form>
+      {{#error}}
+      <pre class="error">{{error}}</pre>
+      {{/error}}
+      {{#get.search}}
+      <div class="results">
+        <h3>Search results for: {{get.search}}, {{get.filefilter}}</h3>
+        <p>Command: {{command}}</p>
+        <pre>{{result}}{{^result}}No results!{{/result}}</pre>
+      </div>
+      <footer>Search took: {{time}} sec</footer>
+      {{/get.search}}
+   </body>
+</html>
