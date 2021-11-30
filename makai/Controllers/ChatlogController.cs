@@ -36,7 +36,7 @@ public class ChatlogController : BaseController
 
     protected string EscapeShellArg(string arg)
     {
-        return "'" + arg.Replace(@"\", @"\\").Replace("'", @"\'") + "'";
+        return "'" + arg.Replace(@"\", @"\\").Replace("'", @"'\''") + "'";
     }
 
     protected string EscapeBashArg(string command)

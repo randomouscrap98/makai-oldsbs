@@ -1,5 +1,6 @@
 <html>
    <head>
+      <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width,maximum-scale=1">
       <style>
 input[type="number"] {
@@ -9,6 +10,16 @@ input[type="number"] {
     color: red;
 }
       </style>
+      <script>
+window.onload = function()
+{
+    results.innerHTML = results.innerHTML.replaceAll(/(https?:\/\/[^\s]+)/g, function(a, b)
+    {
+        var href = encodeURI(b);
+        return '<a href="' + href + '" target="_blank">' + href + '</a>';
+    });
+};
+      </script>
    </head>
    <body>
       <form>
@@ -24,7 +35,7 @@ input[type="number"] {
       <pre class="error">{{error}}</pre>
       {{/error}}
       {{#get.search}}
-      <div class="results">
+      <div class="results" id="results">
         <h3>Search results for: {{get.search}}, {{get.filefilter}}</h3>
         <p>Command: {{command}}</p>
         <pre>{{result}}{{^result}}No results!{{/result}}</pre>
