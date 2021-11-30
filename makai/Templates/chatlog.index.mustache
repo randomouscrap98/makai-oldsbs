@@ -18,6 +18,14 @@ window.onload = function()
         var href = encodeURI(b);
         return '<a href="' + href + '" target="_blank">' + href + '</a>';
     });
+    {{#chatlogurl}}
+    results.innerHTML = results.innerHTML.replaceAll(/^([^\-][^\.]*)(\.txt)/gm, function(a, b, c)
+    {
+       var name = b + c;
+        var href = encodeURI("{{{chatlogurl}}}/" + name);
+        return '<a href="' + href + '" target="_blank">' + name + '</a>';
+    });
+    {{/chatlogurl}}
 };
       </script>
    </head>
@@ -35,10 +43,10 @@ window.onload = function()
       <pre class="error">{{error}}</pre>
       {{/error}}
       {{#get.search}}
-      <div class="results" id="results">
-        <h3>Search results for: {{get.search}}, {{get.filefilter}}</h3>
+      <div class="results">
+        <h3>Search results for: {{get.search}}{{#get.filefilter}} in files '{{get.filefilter}}'{{/get.filefilter}}</h3>
         <p>Command: {{command}}</p>
-        <pre>{{result}}{{^result}}No results!{{/result}}</pre>
+        <pre id="results">{{result}}{{^result}}No results!{{/result}}</pre>
       </div>
       <footer>Search took: {{time}} sec</footer>
       {{/get.search}}

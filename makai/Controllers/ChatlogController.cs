@@ -11,6 +11,7 @@ public class ChatlogControllerConfig
     public string ShellProgram {get;set;} = "";
     public string ChatlogLocation {get;set;} = "";
     public string IncludeRegex {get;set;} = "";
+    public string ChatlogUrl {get;set;} = "";
     public TimeSpan MaxWait {get;set;}
 }
 
@@ -59,6 +60,7 @@ public class ChatlogController : BaseController
             after = after
         };
 
+        data["chatlogurl"] = config.ChatlogUrl;
         data["searchfolder"] = config.ChatlogLocation;
 
         if (!string.IsNullOrEmpty(search))
