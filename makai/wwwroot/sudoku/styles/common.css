@@ -1,14 +1,13 @@
 :root {
-   --screenbg: "#F2F2F2",
-   --boxbg : "#F7F7F7",
-   --boxshadow : "1vmin 1vmin 0 0 #DDD",
-   --noselect : "-webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -o-user-select: none; user-select: none;",
-   --colors_green : "#01DF74",
-   --colors_purple : "#BCA9F5",
-   --colors_blue : "#81DAF5",
-   --colors_red : "#FA5858",
-   --colors_orange : "#FAAC58",
-   --colors_tan : "#F3E2A9"
+   --screenbg: #F2F2F2;
+   --boxbg :#F7F7F7;
+   --boxshadow : 1vmin 1vmin 0 0 #DDD;
+   --colors_green : #01DF74;
+   --colors_purple : #BCA9F5;
+   --colors_blue : #81DAF5;
+   --colors_red : #FA5858;
+   --colors_orange : #FAAC58;
+   --colors_tan : #F3E2A9;
 }
 
 footer

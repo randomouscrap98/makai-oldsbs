@@ -1,9 +1,9 @@
 :root {
-   --boardoutline : "#555",
-   --boardinline : "#888",
-   --boardbg : "#F6F6F6",
-   --boardbgalt : "#FFF",
-   --bottomestimate : "(100vh - 105vmin)"
+   --boardoutline : #555;
+   --boardinline : #888;
+   --boardbg : #F6F6F6;
+   --boardbgalt : #FFF;
+   --bottomestimate : (100vh - 105vmin);
 }
 
 #gameScreen
