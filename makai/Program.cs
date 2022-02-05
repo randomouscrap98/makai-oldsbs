@@ -28,6 +28,7 @@ AddConfigBinding<RenderConfig>(services, configuration);
 AddConfigBinding<DrawControllerConfig>(services, configuration);
 AddConfigBinding<TinyComputerControllerConfig>(services, configuration);
 AddConfigBinding<OfflineAnimatorControllerConfig>(services, configuration);
+AddConfigBinding<SudokuControllerConfig>(services, configuration);
 AddConfigBinding<ChatlogControllerConfig>(services, configuration);
 
 builder.Services.AddControllers();

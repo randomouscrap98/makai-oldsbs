@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,maximum-scale=1">
+        <meta name="rating" content="general">
+        <meta name="description" content="Play Sudoku online.">
+        <meta name="keywords" content="Sudoku, sudoku, puzzle, puzzles, javascript">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Sudoku on SmileBASIC Source</title>
+
+        <!--Favicons-->
+        <!--<link rel="icon" type="image/x-icon" sizes="16x16 24x24 32x32 48x48 64x64 96x96 128x128 192x192 256x256" href="/favicon.ico">-->
+        <!--Styles-->
+        <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+
+        <!-- Example style -->
+        <link rel="stylesheet" href="{{root}}styles/common.css?v={{appversion}}">
+        <!-- Example script -->
+
+        <link rel="stylesheet" href="themeloader?file=styles%2Acommon.css">
+        {{#styles}}
+            <link rel="stylesheet" href="themeloader?file=styles%2A{{.}}">
+        {{/styles}}
+        <!--Scripts-->
+        {{#scripts}}
+            <script src="scripts/{{script}}?version={{loadtime}}" {{async}}></script>
+        {{/scripts}}
+        <!--
+        {{#weinre}}
+            <script src="http://smilebasicsource.com:7777/target/target-script-min.js"></script>
+        {{/weinre}}
+        -->
+    </head>
+    <body data-username="{{user.username}}" data-uid="{{user.uid}}" data-settings="{{user.jsonoptions}}" data-debug="{{data.debug}}">
+        <header>
+        </header>
+        <main>
+            <login-area>
+                <h3>Sudoku Login</h3>
+                {{^loggedin}}
+                <input type="checkbox" id="loginSwitch">
+                <label for="loginSwitch" class="likeButton">Make a new account</label>
+                <form id="loginForm">
+                    <input type="text" name="username" placeholder="Username" required>
+                    <input type="password" name="password" placeholder="Password" required>
+                    <input type="password" name="password2" placeholder="Confirm Password">
+                    <button type="submit" id="loginButton">Login</button>
+                </form>
+                {{/loggedin}}
+                {{#loggedin}}
+                <user-name>{{user.username}}</user-name>
+                <form id="logoutForm">
+                    <input type="hidden" name="logout" value="true">
+                    <button type="submit" id="logoutButton">Logout</button>
+                </form>
+                {{/loggedin}}
+            </login-area>
+            {{{templates.main}}}
+        </main>
+        <!--<footer>
+            <span>Load: {{loadtime}}ms</span>
+        </footer>-->
+    </body>
+</html>

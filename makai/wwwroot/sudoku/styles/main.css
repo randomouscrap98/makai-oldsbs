@@ -1,0 +1,193 @@
+/*The main body will always take up ONLY the available screen space exactly */
+html, body 
+{
+   width: 100%;
+   height: 100%;
+   overflow: hidden;
+   margin: 0px;
+}
+
+/*The login area is special and "custom" so it shouldn't need to become a
+ * template */
+login-area
+{
+   width: 60vmin;
+   height: 60vmin;
+   display: block;
+   float: none;
+   z-index: 1;
+   margin: auto;
+
+   position: absolute; 
+   top: 0;
+   bottom: 0;
+   left: 0;
+   right: 0;
+
+   text-align: center;
+   font-size: 0;  /*this is to remove a space glitch*/
+
+   box-sizing: border-box;
+   background-color: var(--boxbg);
+   box-shadow: var(--boxshadow);
+}
+
+dialog-box, .likeDialog
+{
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   align-content: center;
+   justify-content: center;
+   text-align: center;
+   height: auto;
+   padding: 3vmin;
+   box-sizing: border-box;
+   background-color: var(--boxbg);
+   box-shadow: var(--boxshadow);
+}
+
+dialog-box
+{
+   font-size: 0;
+   width: 75vmin;
+   position: absolute;
+   left: 50%;
+   top: 50%;
+   transform: translate(-50%, -50%);
+}
+
+dialog-box text-area
+{
+   display: block;
+   flex-grow: 1;
+   width: 100%;
+   font-size: 4vmin;
+   margin-bottom: 3vmin;
+}
+
+dialog-box button-area
+{
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+   align-content: center;
+   justify-content: center;
+   width: 100%;
+}
+
+dialog-box button-area button
+{
+   font-size: 3vmin;
+   padding: 1.5vmin;
+   margin: 1.0vmin;
+   flex-grow: 1;
+   max-width: 60%;
+   white-space: nowrap;
+}
+
+/*Again, something else that doesn't need to be a template */
+login-area > h3
+{
+   display: block;
+   font-size: 6vmin;
+   padding: 0;
+   margin: 2.5vmin;
+   margin-top: 3vmin;
+}
+
+/* Always hide the checkbox because it's ugly as biggledy bogs */
+#loginSwitch
+{
+   display: none;
+}
+
+/* The margins on buttons, inputs, etc. MAY become a template */
+login-area input, login-area label[for="loginSwitch"], login-area button,
+login-area user-name
+{
+   display: inline-block;
+   font-size: 4vmin;
+   margin: 1.3vmin;
+}
+
+login-area user-name
+{
+   margin-top: 7vmin;
+   margin-bottom: 7vmin;
+   color: #222;
+   padding: 3vmin;
+   background-color: #EEE;
+   /*border: 2vmin solid #DDD;*/
+   box-shadow: 0.5vmin 0.5vmin 0 0 #CCC;
+}
+
+/* ALL buttons should look the same! */
+button, .likeButton
+{
+   background-color: #CCC;
+   box-shadow: 0.5vmin 0.5vmin 0 0 #AAA;
+   cursor: pointer;
+   box-sizing: border-box;
+   border-style: none;
+   padding: 1.0vmin;
+   -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -o-user-select: none; user-select: none;
+}
+
+button:hover, .likeButton:hover
+{
+   background-color: #DDD;
+   box-shadow: 0.3vmin 0.3vmin 0 0 #AAA;
+}
+
+button:focus, .likeButton:focus
+{
+   outline: none;
+}
+
+login-area label[for="loginSwitch"]
+{
+   font-size: 3vmin;
+}
+
+login-area button
+{
+   width: 60%;
+}
+
+/* Switching to account creation changeds the button color and brings the
+ * hidden field back */
+#loginSwitch:checked + label[for="loginSwitch"]
+{
+   background-color: #01DF74;
+}
+#loginSwitch:checked ~ #loginForm [name="password2"]
+{
+   display: inline-block;
+}
+
+/*I want all inputs to fill most of the width within the login area */
+login-area form input
+{
+   width: 70%;
+   padding: 0.5vmin;
+}
+
+/* The secondary password is usually hidden... unless they select the "make a
+ * new account" button, that is */
+#loginForm [name="password2"]
+{
+   display: none;
+}
+
+/* Statuses should ALMOST CERTAINLY go into a template for other pages */
+@-webkit-keyframes colorPulse { 100%  { background-color: #81DAF5; } }
+@keyframes colorPulse { 100%  { background-color: #81DAF5; } }
+button[data-status="ERROR"] { background-color: #FA5858; }
+button[data-status="RUNNING"]
+{
+   -webkit-animation: colorPulse 0.5s infinite alternate;
+   animation: colorPulse 0.5s infinite alternate;
+}
+button[data-status="SUCCESS"] { background-color: #01DF74; }
+

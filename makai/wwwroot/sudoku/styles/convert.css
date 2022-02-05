@@ -1,0 +1,30 @@
+cover-box
+{
+   display: flex;
+   flex-direction: row;
+   flex-wrap: wrap;
+   align-items: center;
+   align-content: center;
+   justify-content: center;
+}
+
+cover-box form
+{
+   display: flex;
+   flex-direction: column;
+   flex-grow: 1;
+   height: 100%;
+   margin: 1vmin;
+}
+
+cover-box form textarea
+{
+   box-sizing: border-box;
+   width: 100%;
+   flex-grow: 1;
+}
+
+cover-box form button
+{
+   margin: 1vmin;
+}

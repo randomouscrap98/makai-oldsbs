@@ -1,0 +1,480 @@
+:root {
+   --boardoutline : "#555",
+   --boardinline : "#888",
+   --boardbg : "#F6F6F6",
+   --boardbgalt : "#FFF",
+   --bottomestimate : "(100vh - 105vmin)"
+}
+
+#gameScreen
+{
+   width: 100vw;
+   height: 100vh;
+   z-index: 10;
+   background-color: var(--screen-bg);
+   position: absolute;
+   left: 0;
+   top: 0;
+}
+
+fps-counter
+{
+   position: absolute;
+   left: 0;
+   bottom: 0;
+   color: #FA5858;
+   font-size: 2vmin; 
+   z-index: 100;
+}
+
+button-container
+{
+   display: flex;
+   flex-wrap: wrap;
+   flex-direction: row;
+   align-items: center;
+   align-content: center;
+   justify-content: center;
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   padding-top: 17vmin;
+   padding-left: 10vmin;
+   padding-right: 10vmin;
+   box-sizing: border-box;
+   z-index: 12;
+}
+
+button-container button
+{
+   flex-grow: 1;
+   font-size: 6vmin;
+   margin: 1.5vmin;
+   padding: 2.3vmin;
+   min-width: 60vmin;
+   max-width: 80vmin;
+}
+
+button-container ul
+{
+   max-height: 60%;
+   overflow-y: auto;
+   overflow-x: hidden;
+   width: 80%;
+   list-style: none;
+   padding: 0;
+   margin: 2vmin;
+   
+   background-color: var(--boxbg);
+   box-shadow: var(--boxshadow);
+}
+
+button-container ul li
+{
+   margin: 0;
+   overflow: hidden;
+   display: block;
+}
+
+button-container ul li:not(:last-of-type)
+{
+   border-bottom: 0.5vmin solid #EEE;
+}
+
+button-container ul li:hover
+{
+   background-color: #EEE;
+}
+
+button-container ul li[data-complete]
+{
+   background-color: #01DF74;
+}
+
+button-container ul li[data-paused]
+{
+   background-color: #FAAC58;
+}
+
+button-container ul li a
+{
+   display: block;
+   overflow: hidden;
+   cursor: pointer;
+   box-sizing: content-box;
+   padding: 1.5vmin 3vmin;
+   min-width: 8vmin;
+}
+
+button-container ul[data-compact]
+{
+   display: flex;
+   flex-direction: row;
+   flex-wrap: wrap;
+}
+
+button-container ul[data-compact] li
+{
+   flex-grow: 1;
+   flex-shrink: 1;
+   border: 0.25vmin solid #EEE;
+}
+
+button-container puzzle-set
+{
+   font-size: 4vmin;
+   float: left;
+   clear: left;
+   padding: 1vmin;
+}
+
+button-container puzzle-count, button-container set-type
+{
+   font-size: 2.5vmin;
+   float: right;
+   clear: right;
+   padding: 0.25vmin;
+   color: #777;
+}
+
+button-container puzzle-number
+{
+   font-size: 4vmin;
+}
+
+button-container option-name
+{
+   flex-grow: 1;
+   flex-basis: 10vmin;
+   text-align: left;
+   font-size: 3.5vmin;
+}
+
+button-container bool-option,
+button-container string-option
+{
+   display: flex;
+   padding: 1vmin 3vmin;
+   justify-content: center;
+   align-items: center;
+}
+
+button-container bool-option input
+{
+   width: 3vmin;
+   height: 3vmin;
+}
+
+button-container string-option select
+{
+   font-size: 3vmin;
+}
+
+/* General board styling */
+#sudokuBoard
+{
+   width: 100vmin;
+   height: 100vmin;
+   box-sizing: border-box;
+   font-size: 0;
+   border-spacing: 0;
+   background-color: var(--boardbg); 
+   border: 1vmin solid var(--boardoutline);
+}
+
+#sudokuBoard table, #sudokuBoard td, #sudokuBoard tr
+{
+   padding: 0;
+   margin: 0;
+   position: relative;
+   border-spacing: 0;
+   border: 0;
+   -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -o-user-select: none; user-select: none;
+}
+
+#sudokuBoard table
+{
+   width: 100%;
+   height: 100%;
+   box-sizing: border-box;
+}
+
+/* Block styling (the 3x3 grid blocks) */
+#sudokuBoard td[data-block]
+{
+   border-style: solid;
+   border-width: 0.3vmin;
+   border-color: var(--boardoutline);
+}
+
+#sudokuBoard td[data-block].offcolor
+{
+   background-color: var(--boardbgalt);
+}
+
+/* cell styling. Only cell, not contents */
+#sudokuBoard td[data-cell]
+{
+   cursor: pointer;
+   border-style: solid;
+   border-width: 0.2vmin;
+   border-color: var(--boardinline);
+}
+
+#sudokuBoard td[data-cell][data-permanent]
+{
+   background-color: rgba(0,0,0,0.05);
+}
+
+#sudokuBoard td[data-cell][data-error]
+{
+   background-color: var(--colors_red);
+}
+
+#sudokuBoard td[data-cell]:hover
+{
+   background-color: var(--colors_purple);
+}
+
+#sudokuBoard td[data-cell][data-selected]
+{
+   background-color: var(--colors_blue);
+}
+
+/* Cell contents styling */
+#sudokuBoard cell-solution, #sudokuBoard cell-note
+{
+   width: 100%;
+   height: 100%;
+   position: absolute;
+   top: 0;
+   left: 0;
+   box-sizing: border-box;
+   display: flex;
+   font-size: 9vmin;
+   align-content: center;
+   align-items: center;
+   justify-content: center;
+   color: #467;
+}
+
+#sudokuBoard td[data-permanent] cell-solution
+{
+   color: #333;
+}
+
+#sudokuBoard cell-note
+{
+   font-size: 2.7vmin;
+}
+
+/* Outer container styling */
+game-box
+{
+   width: 100%;
+   height: 100%;
+   box-sizing: border-box;
+   overflow: hidden;
+   margin: 0;
+   padding: 0;
+   position: absolute;
+   top: 0;
+   left: 0;
+   display: flex;
+   flex-direction: column;
+   flex-wrap: nowrap;
+   z-index: 50;
+}
+
+control-box
+{
+   flex-grow: 1;
+   flex-basis: 1vmin;
+   display: flex;
+   flex-direction: column;
+   flex-wrap: nowrap;
+}
+
+/* Info styling */
+puzzle-info
+{
+   width: 100%;
+   box-sizing: border-box;
+   font-size: 3vmin;
+   padding: 1vmin;
+   background-color: #C7C7C7;
+   display: flex;
+   flex-direction: row;
+}
+
+puzzle-info info-left, puzzle-info info-center, puzzle-info info-right
+{
+   width: 33.3%;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+}
+
+puzzle-info info-left
+{
+   text-align: left;
+}
+
+puzzle-info info-center
+{
+   text-align: center;
+}
+
+puzzle-info info-right
+{
+   font-family: "Droid Sans Mono", monospace;
+   width: unset;
+   flex-grow: 1;
+   text-align: right;
+}
+
+/* Button styling */
+puzzle-buttons
+{
+   flex-grow: 1;
+   width: 100%;
+   display: flex;
+   flex-direction: row;
+   flex-wrap: nowrap;
+   font-size: 0;
+}
+
+function-buttons, num-pad
+{
+   display: flex;
+   justify-content: space-around;
+   padding: calc(var(--bottomestimate)/20);
+}
+
+function-buttons
+{
+   flex-direction: column;
+   flex-wrap: nowrap;
+   justify-content: space-around;
+}
+
+function-buttons button
+{
+   font-size: calc(var(--bottomestimate)/8);
+   padding: calc(var(--bottomestimate)/24);
+}
+
+num-pad
+{
+   flex-grow: 2;
+   flex-direction: row;
+   flex-wrap: wrap;
+   align-items: center;
+}
+
+num-pad button
+{
+   font-size: calc(var(--bottomestimate)/3);
+   padding: calc(var(--bottomestimate)/6);
+   min-width: 8%;
+}
+
+#noteButton[data-toggled]
+{
+   background-color: var(--colors_green);
+}
+
+@media (max-width: 500px), (max-height: 500px)
+{
+   #sudokuBoard td[data-cell]
+   {
+      border-width: 1px;
+   }
+   #sudokuBoard td[data-block]
+   {
+      border-width: 2px;
+   }
+}
+
+/* Landscape-specific styling */
+@media (orientation: landscape)
+{
+   game-box
+   {
+      flex-direction: row;
+   }
+   puzzle-info
+   {
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+   }
+   puzzle-info info-left, puzzle-info info-center, puzzle-info info-right
+   {
+      flex-grow: 1;
+      width: unset;
+      text-align: center;
+      padding: 0 1vmin;
+   }
+   puzzle-buttons
+   {
+      flex-direction: column;
+   }
+   puzzle-buttons button
+   {
+      font-size: 5vh;
+      padding: 1vh;
+   }
+   function-buttons
+   {
+      flex-direction: row;
+      flex-wrap: wrap;
+   }
+   function-buttons button
+   {
+      flex-grow: 1;
+      margin: 1vh;
+      max-width: 25vh;
+   }
+   num-pad button
+   {
+      min-width: 43%;
+      font-size: 7vh;
+      padding: 1vh;
+   }
+}
+
+@media (min-aspect-ratio: 152/100)
+{
+   num-pad
+   {
+      align-content: center;
+   }
+   num-pad button
+   {
+      min-width: 27%;
+      margin: 1vh;
+   }
+}
+
+/* Portrait-specific styling */
+@media (max-aspect-ratio: 83/100)
+{
+   num-pad button
+   {
+      font-size: calc(var(--bottomestimate)/5);
+      padding: calc(var(--bottomestimate)/20);
+      min-width: 17%;
+   }
+}
+@media (max-aspect-ratio: 66/100)
+{
+   num-pad button
+   {
+      font-size: calc(var(--bottomestimate)/8);
+      padding: calc(var(--bottomestimate)/36);
+      min-width: 30%;
+   }
+}
