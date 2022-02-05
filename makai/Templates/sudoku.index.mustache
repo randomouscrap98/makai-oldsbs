@@ -15,23 +15,22 @@
         <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
 
-        <!-- Example style -->
         <link rel="stylesheet" href="{{root}}styles/common.css?v={{appversion}}">
-        <!-- Example script -->
+        <link rel="stylesheet" href="{{root}}styles/game.css?v={{appversion}}">
+        <link rel="stylesheet" href="{{root}}styles/main.css?v={{appversion}}">
 
-        <link rel="stylesheet" href="themeloader?file=styles%2Acommon.css">
-        {{#styles}}
-            <link rel="stylesheet" href="themeloader?file=styles%2A{{.}}">
-        {{/styles}}
         <!--Scripts-->
-        {{#scripts}}
-            <script src="scripts/{{script}}?version={{loadtime}}" {{async}}></script>
-        {{/scripts}}
-        <!--
-        {{#weinre}}
-            <script src="http://smilebasicsource.com:7777/target/target-script-min.js"></script>
-        {{/weinre}}
-        -->
+        <script src="{{root}}scripts/compatibility.js?v={{appversion}}"></script> <!-- was originally second to last? -->
+        <script src="{{root}}scripts/extras.js?v={{appversion}}"></script>
+        <script src="{{root}}scripts/randomous.js?v={{appversion}}"></script> <!-- was originally last? -->
+        <script src="{{root}}scripts/options.js?v={{appversion}}"></script>
+        <script src="{{root}}scripts/menus.js?v={{appversion}}"></script>
+        <script src="{{root}}scripts/canvasLibrary.js?v={{appversion}}"></script>
+        <script src="{{root}}scripts/animations.js?v={{appversion}}"></script>
+        <script src="{{root}}scripts/game.js?v={{appversion}}"></script>
+        <script src="{{root}}scripts/sudoku.js?v={{appversion}}"></script>
+        <script src="{{root}}scripts/login.js?v={{appversion}}"></script>
+
     </head>
     <body data-username="{{user.username}}" data-uid="{{user.uid}}" data-settings="{{user.jsonoptions}}" data-debug="{{data.debug}}">
         <header>
@@ -57,7 +56,49 @@
                 </form>
                 {{/loggedin}}
             </login-area>
-            {{{templates.main}}}
+
+            {{#template_game}}
+            <cover-box data-puzzlesets="{{data.puzzleSets}}">
+            <canvas id="gameScreen"> </canvas>
+            <button-container id="buttons"></button-container>
+            <shade-box></shade-box>
+            <dialog-box id="dialog"><text-area></text-area><button-area></button-area></dialog-box>
+            {{#debug}}
+            <fps-counter id="fps"></fps-counter>
+            {{/debug}}
+            </cover-box>
+            {{/template_game}}
+
+            {{#template_bgtest}}
+            <cover-box>
+            <canvas id="gameScreen"> </canvas>
+            {{#data.debug}}
+            <fps-counter id="fps"></fps-counter>
+            {{/data.debug}}
+            </cover-box>
+            {{/template_bgtest}}
+
+            {{#template_convert}}
+            {{#loggedin}}
+            <cover-box>
+            <form id="convert">
+            <textarea id="convertText" name="convertText"
+                placeholder="Type puzzles into here"></textarea>
+            <button type="submit">Convert</button>
+            </form>
+            <form id="submit">
+            <textarea id="submitText" name="submitText"
+                placeholder="Formatted puzzles come out here" required></textarea>
+            <input type="text" name="name" placeholder="Name of puzzle pack" required>
+            {{#user.admin}}
+            <form-option><input type="checkbox" name="public"> Make Public </form-option>
+            {{/user.admin}}
+            <button type="submit">Submit</button>
+            </form>
+            </cover-box>
+            {{/loggedin}}
+            {{/template_convert}}
+
         </main>
         <!--<footer>
             <span>Load: {{loadtime}}ms</span>
