@@ -23,16 +23,21 @@
         <script src="{{root}}scripts/compatibility.js?v={{appversion}}"></script> <!-- was originally second to last? -->
         <script src="{{root}}scripts/randomous.js?v={{appversion}}"></script> <!-- was originally last? -->
         <script src="{{root}}scripts/extras.js?v={{appversion}}"></script>
-        <script src="{{root}}scripts/options.js?v={{appversion}}"></script>
-        <script src="{{root}}scripts/menus.js?v={{appversion}}"></script>
         <script src="{{root}}scripts/canvasLibrary.js?v={{appversion}}"></script>
         <script src="{{root}}scripts/animations.js?v={{appversion}}"></script>
+        {{#template_game}}
+        <script src="{{root}}scripts/options.js?v={{appversion}}"></script>
+        <script src="{{root}}scripts/menus.js?v={{appversion}}"></script>
         <script src="{{root}}scripts/game.js?v={{appversion}}"></script>
         <script src="{{root}}scripts/sudoku.js?v={{appversion}}"></script>
         <script src="{{root}}scripts/login.js?v={{appversion}}"></script>
+        {{/template_game}}
+        {{#template_bgtest}}
+            <script src="{{root}}scripts/bgtest.js?v={{appversion}}"></script>
+        {{/template_bgtest}}
 
     </head>
-    <body data-username="{{user.username}}" data-uid="{{user.uid}}" data-settings="{{user.jsonoptions}}" data-debug="{{data.debug}}">
+    <body data-username="{{user.username}}" data-uid="{{user.uid}}" data-settings="{{user.jsonoptions}}" data-debug="{{debug}}">
         <header>
         </header>
         <main>

@@ -65,17 +65,7 @@ var sudokuGame;
       bgGrid.color = gridColor;
       bgGrid.lineWidth = 0.35;
 
-      if(bgstyle === "default")
-      {
-         //Background grid
-         sudokuGame.addAnimation(bgGrid);
-
-         //Background pulsing squares
-         animation = new Animation(drawSquares, 9);
-         animation.begin = initSquares;
-         sudokuGame.addAnimation(animation);
-      }
-      else if(bgstyle === "rainbow")
+      if(bgstyle === "rainbow")
       {
          bgGrid.color = "white";
          sudokuGame.addAnimation(bgGrid);
@@ -88,6 +78,16 @@ var sudokuGame;
       {
          animation = new Animation(drawFlow, 9);
          animation.begin = initFlow;
+         sudokuGame.addAnimation(animation);
+      }
+      else //if(bgstyle === "default")
+      {
+         //Background grid
+         sudokuGame.addAnimation(bgGrid);
+
+         //Background pulsing squares
+         animation = new Animation(drawSquares, 9);
+         animation.begin = initSquares;
          sudokuGame.addAnimation(animation);
       }
 

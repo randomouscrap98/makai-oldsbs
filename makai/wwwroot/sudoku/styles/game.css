@@ -11,7 +11,7 @@
    width: 100vw;
    height: 100vh;
    z-index: 10;
-   background-color: var(--screen-bg);
+   background-color: var(--screenbg);
    position: absolute;
    left: 0;
    top: 0;
