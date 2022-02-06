@@ -4,6 +4,7 @@ using makai.Interfaces;
 using makai.Sudoku;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
+using Newtonsoft.Json;
 
 namespace makai.Controllers;
 
@@ -81,11 +82,37 @@ public class SudokuController : BaseController
         options = new Dictionary<string, MySudokuOption>(DefaultOptions)
     };
 
-    private Task<long?> LookupUserByName(string username)
+    private Task<int?> LookupUserByName(string username) => SimpleDbTask<Task<int?>>(con =>
+        con.QuerySingleAsync<int?>("select uid from users where username = @username", new { username = username })
+    );
+
+    private Task<SudokuUser?> GetUserById(int uid) => SimpleDbTask<Task<SudokuUser?>>(con =>
+        con.QuerySingleAsync<SudokuUser?>("select * from users where uid = @uid", new { uid = uid })
+    );
+
+    private Task<Dictionary<string, object?>> GetRawSettingsForUser(int uid) => SimpleDbTask<Task<Dictionary<string, object?>>>(async con =>
     {
-        return SimpleDbTask<Task<long?>>(con =>
-            con.QuerySingleAsync<long?>("select uid from users where username = @username", new { username = username })
-        );
+        var initialResult = await con.QueryAsync<SDBSetting>("select * from settings where uid = @uid", new { uid = uid });
+        return initialResult.ToDictionary(x => x.name, y => JsonConvert.DeserializeObject(y.value));
+    });
+
+    private async Task<SudokuUser?> GetFullUser(int uid)
+    {
+        var result = await GetUserById(uid);
+
+        if(result != null)
+        {
+            result.options = DefaultOptions;
+            var options = await GetRawSettingsForUser(uid);
+
+            foreach (var option in options)
+            {
+                if(result.options.ContainsKey(option.Key))
+                    result.options[option.Key].value = option.Value;
+            }
+        }
+        
+        return result;
     }
 
     private const string UserSessionIdKey = "userId";

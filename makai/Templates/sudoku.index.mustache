@@ -46,7 +46,7 @@
         <main>
             <login-area>
                 <h3>Sudoku Login</h3>
-                {{^loggedin}}
+                {{^user.loggedIn}}
                 <input type="checkbox" id="loginSwitch">
                 <label for="loginSwitch" class="likeButton">Make a new account</label>
                 <form id="loginForm">
@@ -55,14 +55,14 @@
                     <input type="password" name="password2" placeholder="Confirm Password">
                     <button type="submit" id="loginButton">Login</button>
                 </form>
-                {{/loggedin}}
-                {{#loggedin}}
+                {{/user.loggedIn}}
+                {{#user.loggedIn}}
                 <user-name>{{user.username}}</user-name>
                 <form id="logoutForm">
                     <input type="hidden" name="logout" value="true">
                     <button type="submit" id="logoutButton">Logout</button>
                 </form>
-                {{/loggedin}}
+                {{/user.loggedIn}}
             </login-area>
 
             {{#template_game}}
@@ -87,7 +87,7 @@
             {{/template_bgtest}}
 
             {{#template_convert}}
-            {{#loggedin}}
+            {{#user.loggedIn}}
             <cover-box>
             <form id="convert">
             <textarea id="convertText" name="convertText"
@@ -104,7 +104,7 @@
             <button type="submit">Submit</button>
             </form>
             </cover-box>
-            {{/loggedin}}
+            {{/user.loggedIn}}
             {{/template_convert}}
 
         </main>
