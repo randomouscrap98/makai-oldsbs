@@ -33,7 +33,7 @@ public class MustacheRenderer : IPageRenderer
         return result;
     }
 
-    public async Task<string> RenderPageAsync(string page, Dictionary<string, object> data)
+    public async Task<string> RenderPageAsync(string page, Dictionary<string, object?> data)
     {
         var partials = await GetPartialsAsync();
         var pageRaw = await File.ReadAllTextAsync(Path.Join(config.TemplateLocation, page + config.TemplateExtension));

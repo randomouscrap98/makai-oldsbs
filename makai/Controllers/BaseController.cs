@@ -17,9 +17,9 @@ public class BaseController : Controller
         this.pageRenderer = pageRenderer;
     }
 
-    protected Dictionary<string, object> GetDefaultData()
+    protected Dictionary<string, object?> GetDefaultData()
     {
-        return new Dictionary<string, object>()
+        return new Dictionary<string, object?>()
         {
             { "appversion", GetType().Assembly.GetName().Version?.ToString() ?? "UNKNOWN" },
             { "isgcserver", GCSettings.IsServerGC },

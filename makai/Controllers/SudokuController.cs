@@ -70,7 +70,7 @@ public class SudokuController : BaseController
         //Set user data if they're logged in
         var userId = CurrentUser();
         if(userId.HasValue)
-            data["user"] = GetFullUser(userId.Value);
+            data["user"] = await GetFullUser(userId.Value);
 
         return new ContentResult{
             ContentType = "text/html",

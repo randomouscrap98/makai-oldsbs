@@ -2,6 +2,7 @@ using Dapper.Contrib.Extensions;
 
 namespace makai.Sudoku;
 
+[Table("users")]
 public class SDBUser
 {
     [Key]
@@ -12,6 +13,7 @@ public class SDBUser
     public bool admin {get;set;}
 }
 
+[Table("settings")]
 public class SDBSetting
 {
     [Key]
@@ -21,6 +23,7 @@ public class SDBSetting
     public string value {get;set;} = "";
 }
 
+[Table("puzzles")]
 public class SDBPuzzle
 {
     [Key]
@@ -32,6 +35,7 @@ public class SDBPuzzle
     public bool @public {get;set;}
 }
 
+[Table("inprogress")]
 public class SDBInProgress
 {
     [Key]
@@ -43,6 +47,7 @@ public class SDBInProgress
     public string puzzle {get;set;} = ""; //this is json
 }
 
+[Table("completions")]
 public class SDBCompletions
 {
     [Key]
