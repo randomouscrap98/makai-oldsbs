@@ -208,6 +208,56 @@ public class SudokuController : BaseController
         });
     }
 
+    [HttpPost("settingsave")]
+    public Task<QueryObject> SettingSaveAsync()
+    {
+        return SafetyRun(async () =>
+        {
+            var uid = CurrentUser();
+
+            if(uid == null)
+                return FromError("Must be logged in to set settings!");
+
+            var result = new QueryObject();
+
+            //Only accept keys from the default settings set
+            await SimpleDbTask<Task>(async con =>
+            {
+                con.Open();
+
+                using(var tsx = con.BeginTransaction())
+                {
+                    foreach (var key in Request.Form.Keys)
+                    {
+                        if (DefaultOptions.ContainsKey(key))
+                        {
+                            await con.ExecuteAsync("delete from settings where uid = @uid and name = @name",
+                                new { uid = uid, name = key }, tsx);
+                            var sid = await con.InsertAsync(new SDBSetting() {
+                                uid = uid.Value,
+                                name = key,
+                                value = Request.Form[key]
+                            }, tsx);
+
+                            if(sid <= 0)
+                                throw new InvalidOperationException($"Couldn't insert new setting '{key}'");
+                        }
+                        else
+                        {
+                            result.warnings.Add($"Setting '{key}' not found! Skipping!");
+                        }
+                    }
+
+                    tsx.Commit();
+                }
+            });
+
+            result.result = true;
+
+            return result;
+        });
+    }
+
     [HttpGet()]
     public Task<ContentResult> GetIndexAsync()
     {

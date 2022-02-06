@@ -12,6 +12,7 @@ public class MySudokuOption
    public MySudokuOption(object @default, string title, IEnumerable<string>? possibles = null)
    {
       this.@default = @default;
+      this.value = @default;
       this.title = title;
       this.possibles = possibles?.ToList();
    }
