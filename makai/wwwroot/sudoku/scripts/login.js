@@ -26,10 +26,12 @@
       var form = e.target;
 
 		data.append("username", form.username.value);
-		data.append("password", MD5Library.Hash(form.password.value));
+		data.append("password", form.password.value);
+		//data.append("password", MD5Library.Hash(form.password.value));
 
       if(switchCheckbox().checked)
-         data.append("password2", MD5Library.Hash(form.password2.value));
+         data.append("password2", form.password2.value);
+         //data.append("password2", MD5Library.Hash(form.password2.value));
 
       fullGenericXHR("login", data, loginButton(), reloadSuccess);
    }
