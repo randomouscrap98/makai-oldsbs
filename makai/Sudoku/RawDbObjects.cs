@@ -7,7 +7,7 @@ public class SDBUser
 {
     [Key]
     public int uid {get;set;}
-    public DateTime created {get;set;}
+    public DateTime created {get;set;} = DateTime.UtcNow;
     public string username {get;set;} = "";
     public string password {get;set;} = "";
     public bool admin {get;set;}
@@ -42,7 +42,7 @@ public class SDBInProgress
     public int ipid {get;set;}
     public int uid {get;set;}
     public int pid {get;set;}
-    public DateTime paused {get;set;}
+    public DateTime paused {get;set;} = DateTime.UtcNow;
     public int seconds {get;set;}
     public string puzzle {get;set;} = ""; //this is json
 }
@@ -54,6 +54,6 @@ public class SDBCompletions
     public int cid {get;set;}
     public int uid {get;set;}
     public int pid {get;set;}
-    public DateTime completed {get;set;}
+    public DateTime completed {get;set;} = DateTime.UtcNow;
     public int seconds {get;set;}
 }
