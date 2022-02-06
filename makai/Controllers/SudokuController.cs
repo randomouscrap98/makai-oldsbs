@@ -267,6 +267,135 @@ public class SudokuController : BaseController
         });
     }
 
+    [HttpPost("sudokuquery")]
+    public Task<QueryObject> SudokuQueryAsync([FromForm]int? pid, [FromForm]string? puzzleset)
+    {
+        return SafetyRun(async () =>
+        {
+            var uid = CurrentUser();
+
+            if(!string.IsNullOrWhiteSpace(puzzleset))
+            {
+                var result = (await SimpleDbTask(con => con.QueryAsync<QueryByPuzzleset>(
+                    "SELECT p.pid, (c.cid IS NOT NULL) as completed, (i.ipid IS NOT NULL) as paused, c.completed as completedOn, i.paused as pausedOn " +
+                    "FROM puzzles p LEFT JOIN " +
+                    "completions c ON c.pid=p.pid LEFT JOIN " + 
+                    "inprogress i ON i.pid=p.pid " +
+                    "WHERE puzzleset=@puzzleset AND (c.uid=@uid OR c.uid IS NULL) AND " +
+                    "(i.uid=@uid OR i.uid IS NULL) " +
+                    "GROUP BY p.pid ORDER BY p.pid ", 
+                    new { puzzleset = puzzleset, uid = uid }
+                ))).ToList();
+
+                for(int i = 0; i < result.Count; i++)
+                    result[i].number = i + 1;
+
+                return FromResult(JsonConvert.SerializeObject(result));
+            }
+            else if(pid != null)
+            {
+                return FromResult(JsonConvert.SerializeObject(await SimpleDbTask(con => con.QuerySingleOrDefaultAsync<QueryByPid>(
+                    "SELECT p.*, i.puzzle as playersolution, i.seconds FROM puzzles p LEFT JOIN " +
+                    "inprogress i ON p.pid=i.pid WHERE p.pid=@pid AND " +
+                    "(i.uid=@uid OR i.uid IS NULL)", 
+                    new { pid = pid, uid = uid }
+                ))));
+            }
+            else
+            {
+                return FromError("You must provide EITHER pid OR puzzleset!");
+            }
+            //if(uid == null)
+            //    return FromError("Must be logged in to set settings!");
+        });
+    }
+
+    [HttpPost("puzzlesave")]
+    public Task<QueryObject> PuzzleSaveAsync([FromForm]int pid, [FromForm]string? data, [FromForm]bool? delete, [FromForm]int? seconds)
+    {
+        return SafetyRun(async () =>
+        {
+            var uid = CurrentUser();
+
+            if(uid == null)
+                return FromError("Must be logged in to save puzzles!");
+            
+            //Go look up the raw puzzle data by pid. If this fails, we must also fail
+            var rawPuzzle = await SimpleDbTask(con => con.QuerySingleOrDefaultAsync<SDBPuzzle>("select * from puzzles where pid = @pid", new {pid = pid}));
+
+            if(rawPuzzle == null)
+                return FromError($"No puzzle with pid {pid}!");
+            
+            //Now apparently, in the old one, we always delete progress. That's a bit scary, but ok. It should almost certainly
+            //be done in a transaction IMO
+            return await SimpleDbTask(async con => 
+            {
+                var result = new QueryObject();
+
+                con.Open();
+
+                using(var tsx = con.BeginTransaction())
+                {
+                    //GOSH, in the original php, this would delete EVERYONE'S progress, because there was no uid check!! This was awful!!
+                    await con.ExecuteAsync("delete from inprogress where pid = @pid and uid = @uid", new {pid = pid, uid = uid}, tsx);
+
+                    //This SHOULD be a submission
+                    if(data != null)
+                    {
+                        if(seconds == null)
+                            return FromError("Must report seconds taken on puzzle so far!");
+
+                        dynamic dataObj = JsonConvert.DeserializeObject(data) ?? throw new InvalidOperationException("Data in bad format, must be valid json!");
+                        var userSolution = (string)dataObj.puzzle;
+
+                        //One marks completed, the other just in-progress
+                        if(userSolution == rawPuzzle.solution)
+                        {
+                            var id = await con.InsertAsync(new SDBCompletions()
+                            {
+                                pid = pid,
+                                seconds = seconds.Value,
+                                uid = uid.Value
+                            }, tsx);
+
+                            if(id <= 0)
+                                return FromError("Couldn't save completion!");
+
+                            result.result = "completed";
+                        }
+                        else
+                        {
+                            var id = await con.InsertAsync(new SDBInProgress()
+                            {
+                                pid = pid,
+                                seconds = seconds.Value,
+                                uid = uid.Value,
+                                puzzle = data
+                            }, tsx);
+
+                            if(id <= 0)
+                                return FromError("Couldn't save puzzle!");
+
+                            result.result = "saved";
+                        }
+                    }
+                    else if(delete != null && delete.Value)
+                    {
+                        //It's fine, we already deleted it
+                        result.result = true;
+                    }
+                    else
+                    {
+                        return FromError("Invalid parameters! Must provide either data or set delete!");
+                    }
+
+                    tsx.Commit();
+                    return result;
+                }
+            });
+        });
+    }
+
     [HttpGet()]
     public Task<ContentResult> GetIndexAsync()
     {
