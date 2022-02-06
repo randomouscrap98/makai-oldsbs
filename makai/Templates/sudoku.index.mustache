@@ -70,7 +70,7 @@
             </login-area>
 
             {{#template_game}}
-            <cover-box data-puzzlesets="{{data.puzzleSets}}">
+            <cover-box data-puzzlesets="{{puzzleSets}}">
             <canvas id="gameScreen"> </canvas>
             <button-container id="buttons"></button-container>
             <shade-box></shade-box>
@@ -84,9 +84,9 @@
             {{#template_bgtest}}
             <cover-box>
             <canvas id="gameScreen"> </canvas>
-            {{#data.debug}}
+            {{#debug}}
             <fps-counter id="fps"></fps-counter>
-            {{/data.debug}}
+            {{/debug}}
             </cover-box>
             {{/template_bgtest}}
 

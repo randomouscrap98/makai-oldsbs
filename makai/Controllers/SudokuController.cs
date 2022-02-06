@@ -62,13 +62,16 @@ public class SudokuController : BaseController
 
     private async Task<ContentResult> SimpleRender(string subtemplate)
     {
+        var userId = CurrentUser();
+
         var data = GetDefaultData();
         data["root"] = "/sudoku/";
         data[$"template_{subtemplate}"] = true;
         data["debug"] = Request.Query.ContainsKey("debug");
 
+        data["puzzleSets"] = JsonConvert.SerializeObject(await GetPuzzleSets(userId ?? 0));
+
         //Set user data if they're logged in
-        var userId = CurrentUser();
         if(userId.HasValue)
             data["user"] = await GetFullUser(userId.Value);
 
@@ -132,6 +135,12 @@ public class SudokuController : BaseController
     private void LoginUser(int uid) { HttpContext.Session.SetInt32(UserSessionIdKey, uid); }
     private void LogoutUser() { HttpContext.Session.Clear(); }
     private int? CurrentUser() => HttpContext.Session.GetInt32(UserSessionIdKey);
+
+    private Task<IEnumerable<PuzzleSetAggregate>> GetPuzzleSets(int uid) => SimpleDbTask(con =>
+        con.QueryAsync<PuzzleSetAggregate>(
+            "select puzzleset, uid, public, count(*) as count from puzzles where uid = @uid or public=1 group by puzzleset",
+            new {uid = uid})
+    );
 
     private QueryObject FromResult(object result) => new QueryObject() { queryok = true, result = result };
     private QueryObject FromErrors(IEnumerable<string> errors) => new QueryObject() { queryok = false, errors = errors.ToList() };
