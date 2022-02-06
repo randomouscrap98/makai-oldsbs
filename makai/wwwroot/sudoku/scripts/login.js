@@ -33,14 +33,14 @@
          data.append("password2", form.password2.value);
          //data.append("password2", MD5Library.Hash(form.password2.value));
 
-      fullGenericXHR("login", data, loginButton(), reloadSuccess);
+      fullGenericXHR(rootURL + "login", data, loginButton(), reloadSuccess);
    }
 
    function tryLogout(e)
    {
       e.preventDefault();
       var data = new window.FormData(e.target);
-      fullGenericXHR("login", data, logoutButton(), reloadSuccess);
+      fullGenericXHR(rootURL + "login", data, logoutButton(), reloadSuccess);
    }
 
    function switchLogin(e)

@@ -88,5 +88,5 @@ function submitPuzzles(e)
 {
    var data = new FormData(e.target);
    e.preventDefault();
-   fullGenericXHR("puzzlesubmit", data, e.target.querySelector("button"), reloadSuccess);
+   fullGenericXHR(rootURL + "puzzlesubmit", data, e.target.querySelector("button"), reloadSuccess);
 }

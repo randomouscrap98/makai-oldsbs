@@ -129,7 +129,7 @@ function saveOptions(e)
    for(i = 0; i < selects.length; i++)
       data.append(selects[i].getAttribute("name"), JSON.stringify(selects[i].value));
 
-   fullGenericXHR("settingsave", data, e.target, reloadSuccess);
+   fullGenericXHR(rootURL + "settingsave", data, e.target, reloadSuccess);
 }
 
 function makePlayMenu()
@@ -173,7 +173,7 @@ function makePuzzleMenu(puzzleSet)
    var data = new FormData();
    data.append("puzzleset", puzzleSet);
 
-   fullGenericXHR("sudokuquery", data, null, function(json, statusElement)
+   fullGenericXHR(rootURL + "sudokuquery", data, null, function(json, statusElement)
    {
       var puzzles = JSON.parse(json.result);
       var list = [];
@@ -298,7 +298,7 @@ function ensureContinue(pid, number)
                var formData = new FormData();
                formData.append("delete", true);
                formData.append("pid", pid);
-               fullGenericXHR("puzzlesave", formData, null, boundCreate);
+               fullGenericXHR(rootURL + "puzzlesave", formData, null, boundCreate);
             })
          ]
       )),

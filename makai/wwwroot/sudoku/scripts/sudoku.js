@@ -20,7 +20,7 @@ function makePuzzleScreen(pid, number)
    data.append("pid", pid);
    lowPerformance = getOption("lowperformance");
 
-   fullGenericXHR("sudokuquery", data, null, function(json, statusElement)
+   fullGenericXHR(rootURL + "sudokuquery", data, null, function(json, statusElement)
    {
       var puzzleData, i;
 
@@ -765,7 +765,7 @@ function savePuzzle(saveCache)
    formData.append("seconds", seconds);
    formData.append("pid", pid);
 
-   fullGenericXHR("puzzlesave?small=1", formData, document.querySelector("puzzle-info"), 
+   fullGenericXHR(rootURL + "puzzlesave?small=1", formData, document.querySelector("puzzle-info"), 
       saveCompleted);
 }
 

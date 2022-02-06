@@ -95,12 +95,12 @@ public class SudokuController : BaseController
         options = new Dictionary<string, MySudokuOption>(DefaultOptions)
     };
 
-    private Task<SudokuUser?> GetUserByName(string username) => SimpleDbTask(con =>
-        con.QuerySingleAsync<SudokuUser?>("select * from users where username = @username", new { username = username })
+    private Task<SudokuUser> GetUserByName(string username) => SimpleDbTask(con =>
+        con.QuerySingleOrDefaultAsync<SudokuUser>("select * from users where username = @username", new { username = username })
     );
 
-    private Task<SudokuUser?> GetUserById(int uid) => SimpleDbTask(con =>
-        con.QuerySingleAsync<SudokuUser?>("select * from users where uid = @uid", new { uid = uid })
+    private Task<SudokuUser> GetUserById(int uid) => SimpleDbTask(con =>
+        con.QuerySingleOrDefaultAsync<SudokuUser>("select * from users where uid = @uid", new { uid = uid })
     );
 
     private Task<Dictionary<string, object?>> GetRawSettingsForUser(int uid) => SimpleDbTask(async con =>
@@ -189,7 +189,7 @@ public class SudokuController : BaseController
                 }
                 else //This is login
                 {
-                    var user = await SimpleDbTask(con => con.QuerySingleAsync<SDBUser?>("select * from users where username = @username", new { username = username}));
+                    var user = await SimpleDbTask(con => con.QuerySingleOrDefaultAsync<SDBUser>("select * from users where username = @username", new { username = username}));
 
                     if(user == null)
                         return FromError("No user found with that username!");
