@@ -2,6 +2,13 @@
    <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width,maximum-scale=1">
+      <!-- Some pre-requisites for auto-chatdraw -->
+      <script src="{{root}}randomous.js?v={{appversion}}"></script>
+      <!--<script src="{{root}}randomousCanvas.js?v={{appversion}}"></script>-->
+      <script src="{{root}}chatdraw.js?v={{appversion}}"></script>
+      <!--<script src="{{root}}index.js?v={{appversion}}"></script>-->
+      <script src="{{root}}extras.js?v={{appversion}}"></script>
+      <script src="{{root}}lz-string.min.js?v={{appversion}}"></script>
       <style>
 input[type="number"] {
    width: 3em;
@@ -9,10 +16,46 @@ input[type="number"] {
 .error {
     color: red;
 }
+.chatdrawbutton {
+   border: none;
+   background: none;
+   cursor: pointer;
+   color: red;
+   margin: 0;
+   margin-right: 0.3em;
+   line-height: 0;
+   padding: 0;
+}
       </style>
       <script>
 window.onload = function()
 {
+    results.innerHTML = results.innerHTML.replaceAll(/^([^:]+)(:\d+:)([^\[]+\[\d+:\d+\].?:\s*)(.*)$/gm, function(all, gpre, gnum, usr, dat)
+    {
+       //console.log(dat);
+       if(dat.length > 100 && /^[A-Za-z\d+/]+=*$/.test(dat))
+       {
+          //console.log("Found potential drawing");
+         var button = document.createElement("button");
+         button.className = "chatdrawbutton";
+         button.innerHTML = "&#9998;";
+         button.dataset.rawdata = dat;
+         button.setAttribute("onclick", "tryChatDraw(this)");
+         var dataElem = document.createElement("span");
+         dataElem.textContent = dat;
+         dataElem.class = "chatdrawdata";
+         return gpre + gnum + usr + button.outerHTML + dataElem.outerHTML;
+       }
+       else
+       {
+          return gpre + gnum + usr + dat;
+       }
+
+        //var name = b + c;
+        //var href = encodeURI("{{{chatlogurl}}}/" + name);
+        //Also include the chatdraw maker thing!
+        //return '<button class="chatdrawbutton" onclick="tryChatDraw(this);">&#9998;</button><a href="' + href + '" target="_blank">' + name + '</a>';
+    });
     results.innerHTML = results.innerHTML.replaceAll(/(https?:\/\/[^\s]+)/g, function(a, b)
     {
         var href = encodeURI(b);
@@ -21,12 +64,19 @@ window.onload = function()
     {{#chatlogurl}}
     results.innerHTML = results.innerHTML.replaceAll(/^([^\-][^\.]*)(\.txt)/gm, function(a, b, c)
     {
-       var name = b + c;
+        var name = b + c;
         var href = encodeURI("{{{chatlogurl}}}/" + name);
+        //Also include the chatdraw maker thing!
+        //return '<button class="chatdrawbutton" onclick="tryChatDraw(this);">&#9998;</button><a href="' + href + '" target="_blank">' + name + '</a>';
         return '<a href="' + href + '" target="_blank">' + name + '</a>';
     });
     {{/chatlogurl}}
 };
+function tryChatDraw(button)
+{
+   //Need the text to the right of the button
+   console.log(button);
+}
       </script>
    </head>
    <body>

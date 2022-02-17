@@ -60,6 +60,7 @@ public class ChatlogController : BaseController
             after = after
         };
 
+        data["root"] = "/chatlog/";
         data["chatlogurl"] = config.ChatlogUrl;
         data["searchfolder"] = config.ChatlogLocation;
 
