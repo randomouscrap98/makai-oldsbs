@@ -26,16 +26,17 @@ input[type="number"] {
    line-height: 0;
    padding: 0;
 }
+.chatdrawcanvas {
+   border: 1px solid #777;
+}
       </style>
       <script>
 window.onload = function()
 {
     results.innerHTML = results.innerHTML.replaceAll(/^([^:]+)(:\d+:)([^\[]+\[\d+:\d+\].?:\s*)(.*)$/gm, function(all, gpre, gnum, usr, dat)
     {
-       //console.log(dat);
        if(dat.length > 100 && /^[A-Za-z\d+/]+=*$/.test(dat))
        {
-          //console.log("Found potential drawing");
          var button = document.createElement("button");
          button.className = "chatdrawbutton";
          button.innerHTML = "&#9998;";
@@ -50,11 +51,6 @@ window.onload = function()
        {
           return gpre + gnum + usr + dat;
        }
-
-        //var name = b + c;
-        //var href = encodeURI("{{{chatlogurl}}}/" + name);
-        //Also include the chatdraw maker thing!
-        //return '<button class="chatdrawbutton" onclick="tryChatDraw(this);">&#9998;</button><a href="' + href + '" target="_blank">' + name + '</a>';
     });
     results.innerHTML = results.innerHTML.replaceAll(/(https?:\/\/[^\s]+)/g, function(a, b)
     {
@@ -66,16 +62,25 @@ window.onload = function()
     {
         var name = b + c;
         var href = encodeURI("{{{chatlogurl}}}/" + name);
-        //Also include the chatdraw maker thing!
-        //return '<button class="chatdrawbutton" onclick="tryChatDraw(this);">&#9998;</button><a href="' + href + '" target="_blank">' + name + '</a>';
         return '<a href="' + href + '" target="_blank">' + name + '</a>';
     });
     {{/chatlogurl}}
 };
 function tryChatDraw(button)
 {
-   //Need the text to the right of the button
-   console.log(button);
+   try
+   {
+      var canvas = ChatDrawUtilities.ChatDrawToFrame(button.dataset.rawdata).canvas;
+      canvas.className = "chatdrawcanvas";
+      var dataElem = button.nextSibling;
+      dataElem.parentNode.removeChild(dataElem);
+      button.parentNode.replaceChild(canvas, button);
+   }
+   catch(ex)
+   {
+      alert("Couldn't convert chatdraw, it might not be drawing! See console for details");
+      console.log(ex);
+   }
 }
       </script>
    </head>
