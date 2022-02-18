@@ -27,12 +27,22 @@ input[type="number"] {
    padding: 0;
 }
 .chatdrawcanvas {
+   vertical-align: top;
    border: 1px solid #777;
+}
+#loadAllDrawings {
+   margin-left: 0.5em;
+}
+#manualchatdrawresults {
+   margin: 0.4em 0;
 }
       </style>
       <script>
 window.onload = function()
 {
+   if(!("results" in window))
+      return;
+
     results.innerHTML = results.innerHTML.replaceAll(/^([^:]+)(:\d+:)([^\[]+\[\d+:\d+\].?:\s*)(.*)$/gm, function(all, gpre, gnum, usr, dat)
     {
        if(dat.length > 100 && /^[A-Za-z\d+/]+=*$/.test(dat))
@@ -66,7 +76,7 @@ window.onload = function()
     });
     {{/chatlogurl}}
 };
-function tryChatDraw(button)
+function tryChatDraw(button, auto)
 {
    try
    {
@@ -78,7 +88,30 @@ function tryChatDraw(button)
    }
    catch(ex)
    {
-      alert("Couldn't convert chatdraw, it might not be drawing! See console for details");
+      if(!auto)
+         alert("Couldn't convert chatdraw, it might not be a drawing! See console for details");
+      console.log(ex);
+   }
+}
+function loadAllDrawings()
+{
+   document.querySelectorAll('.chatdrawbutton').forEach(x=> tryChatDraw(x, true));
+}
+function manualChatDrawSubmit()
+{
+   try
+   {
+      console.log(manualchatdrawtext.value);
+      var canvas = ChatDrawUtilities.ChatDrawToFrame(manualchatdrawtext.value).canvas;
+      canvas.className = "chatdrawcanvas";
+      //Resets every time, is this OK?
+      manualchatdrawresults.innerHTML = "";
+      manualchatdrawresults.appendChild(canvas);
+      manualchatdrawtext.value = "";
+   }
+   catch(ex)
+   {
+      alert("Couldn't convert chatdraw, it might not be a drawing! See console for details");
       console.log(ex);
    }
 }
@@ -100,11 +133,17 @@ function tryChatDraw(button)
       {{#get.search}}
       <div class="results">
         <h3>Search results for: {{get.search}}{{#get.filefilter}} in files '{{get.filefilter}}'{{/get.filefilter}}</h3>
-        <p>Command: {{command}}</p>
+        <p>Command: {{command}} <button onclick="loadAllDrawings()" id="loadalldrawings">Load All Drawings</button></p>
         <pre id="results">{{result}}{{^result}}No results!{{/result}}</pre>
       </div>
       <footer>Search took: {{time}} sec</footer>
       {{/get.search}}
+      <div id="manualchatdraw">
+         <input type="text" id="manualchatdrawtext" placeholder="Drawing string">
+         <button onclick="manualChatDrawSubmit()">Convert Drawing</button>
+         <div id="manualchatdrawresults">
+         </div>
+      </div>
       <div style="display: none">{{searchfolder}}</div>
    </body>
 </html>
