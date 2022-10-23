@@ -306,10 +306,11 @@ var LocalChatDraw = (function() {
       {
          if(i < buttons.length)
          {
-            buttons[i].style.color = palette[i].ToRGBString(); //colors[i];
+            setButtonColor(buttons[i], palette[i].ToRGBString());
+            //buttons[i].style.color = palette[i].ToRGBString(); //colors[i];
 
             if(buttons[i].hasAttribute("data-selected"))
-               drawer.color = buttons[i].style.color;
+               drawer.color = getButtonColor(buttons[i]);//buttons[i].style.color;
          }
       }
 
@@ -426,20 +427,14 @@ var LocalChatDraw = (function() {
       //Set up the color picker
       colorPicker.id = colorPickerID;
       colorPicker.setAttribute("type", "color");
-      colorPicker.style.position = "absolute";
-      colorPicker.style.width = "0";
-      colorPicker.style.height = "0";
-      colorPicker.style.padding = "0";
-      colorPicker.style.margin = "0";
-      colorPicker.style.border = "none";
-      colorPicker.style.visibility = "hidden";
       colorPicker.addEventListener("change", function(event)
       {
          var frame = animateFrames.GetFrame(); //GetSelectedFrame();
          var newColor = StyleUtilities.GetColor(event.target.value);
          CanvasUtilities.SwapColor(frame.canvas.getContext("2d"), 
-            StyleUtilities.GetColor(event.target.associatedButton.style.color), newColor, 0);
-         event.target.associatedButton.style.color = newColor.ToRGBString(); 
+            StyleUtilities.GetColor(getButtonColor(event.target.associatedButton)), newColor, 0);
+         setButtonColor(event.target.associatedButton, newColor.ToRGBString());
+         //event.target.associatedButton.style.color = newColor.ToRGBString(); 
          drawer.color = newColor.ToRGBString(); 
          drawer.moveToolClearColor = rgbToFillStyle(getClearColor());
          drawer.Redraw();
@@ -501,7 +496,8 @@ var LocalChatDraw = (function() {
       {
          var colorButton = HTMLUtilities.CreateUnsubmittableButton(); //makeUnsubmittableButton();
 
-         colorButton.innerHTML = "■";
+         colorButton.innerHTML = "⬛"; //"■";
+         colorButton.style.color = "transparent";
          colorButton.className = colorButtonClass;
          colorButton.addEventListener("click", colorButtonSelect.callBind(colorButton, canvas));
 
@@ -513,6 +509,7 @@ var LocalChatDraw = (function() {
 
       buttonArea.appendChild(sendButton);
 
+      //buttonArea2.appendChild(colorPicker);
       buttonArea2.appendChild(colorPicker);
       buttonArea2.appendChild(moveButton);
       buttonArea2.appendChild(clearButton);
@@ -949,21 +946,25 @@ var LocalChatDraw = (function() {
 
       //Set current button to this one.
       colorButton.dataset.selected = "true";
+      var buttonColor = getButtonColor(colorButton);
 
       //If this button was already selected, perform the color swap.
-      if(alreadySelected)
-      {
+      //if(alreadySelected)
+      //{
          var colorPicker = document.getElementById(colorPickerID);
-         colorButton.appendChild(colorPicker);
-         colorPicker.associatedButton = colorButton;
-         colorPicker.value = rgbToHex(fillStyleToRgb(colorButton.style.color));
-         colorPicker.focus();
-         colorPicker.click();
-      }
-      else
-      {
-         drawer.color = colorButton.style.color;
-      }
+         if(colorPicker)
+         {
+         //colorButton.appendChild(colorPicker);
+            colorPicker.associatedButton = colorButton;
+            colorPicker.value = rgbToHex(fillStyleToRgb(buttonColor)); //getButtonColor(colorButton))); //.dataset.color)); //style.color));
+         //colorPicker.focus();
+         //colorPicker.click();
+         }
+      //}
+      //else
+      //{
+         drawer.color = buttonColor; //getButtonColor(colorButton.dataset.color; //style.color;
+      //}
    };
 
    //Send the current drawing to the chat.
@@ -986,6 +987,12 @@ var LocalChatDraw = (function() {
       drawIframe.contentWindow.postMessage({uploadImage:true}, "*");
    };
 
+   var getButtonColor = function(button) { return button.dataset.color; };
+   var setButtonColor = function(button, color) { 
+      button.setAttribute("data-color", color); 
+      button.style.textShadow = "0 0 " + color;
+   };
+
    //Get the colors from the drawing area buttons
    var getButtonColors = function()
    {
@@ -993,7 +1000,7 @@ var LocalChatDraw = (function() {
       var buttons = getColorButtons();
 
       for(var i = 0; i < buttons.length; i++)
-         colors.push(fillStyleToRgb(buttons[i].style.color));
+         colors.push(fillStyleToRgb(getButtonColor(buttons[i])));//buttons[i].style.color));
 
       return colors;
    };

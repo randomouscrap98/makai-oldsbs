@@ -1,2 +1,273 @@
-#chatdraw,#chatdraw animate-area{background-color:#f8f8f8;position:absolute}#sendpane{position:relative}#chatdraw{display:block;z-index:10;bottom:1px;right:1px}#chatdraw[data-fixedsize]{font-size:0;height:80vh;box-sizing:border-box;border:1px solid #bbb;width:calc(100%-3.25rem-3.25rem)}#chatdraw[data-docked]{position:fixed;right:0;bottom:0;width:75%}#chatdraw[data-fixedsize] iframe{border:none;width:100%;height:calc(100%-50px);margin:0;padding:0}#chatdraw :focus,#chatdraw:focus{outline:0}#chatdraw canvas,#messagepane canvas{display:inline-block;vertical-align:bottom;image-rendering:pixelated;border:1px solid #bbb;margin:0;padding:0}#chatdraw canvas.lightbox{pointer-events:none;position:absolute;left:0;top:0}#chatdraw .overlay{position:absolute;left:0;top:0}#chatdraw canvas{cursor:crosshair}#chatdraw[data-hidden]{width:unset;height:unset}#chatdraw[data-hidden] :not([data-keep]){display:none!important}#chatdraw button-area{display:block;font-size:0;background-color:#eee}#chatdraw:not([data-hidden])>button-area{text-align:right;border-left:1px solid #bbb;border-right:1px solid #bbb}#chatdraw button-area button{display:inline-block;border:none;border-radius:unset;height:25px;width:25px;font-size:14px;outline:0}#chatdraw button-area button:hover{background-color:#ddd}#chatdraw button-area button:active{transform:none!important}#chatdraw button-area button:disabled{color:#bbb;background-color:#ddd}#chatdraw button-area button[data-selected]{background-color:#888;color:#eee}chatdraw-controlcontainer{width:1.1rem;display:inline-block}chatdraw-controlcontainer>a{text-decoration:none!important;display:inline-block;font-size:.8rem;cursor:pointer;padding:0 .2em}chatdraw-controlcontainer .chatdrawplay{font-size:1rem}#chatdraw animate-area{left:-201px;top:0;width:200px;height:150px;display:block;border-left:1px solid #bbb;border-top:1px solid #bbb;border-bottom:1px solid #bbb}#chatdraw animate-area>*{width:100%}#chatdraw animate-area animate-scroller{display:block;height:-webkit-calc(100% - 50px);height:calc(100%-50px);overflow-y:scroll}#chatdraw animate-area animate-frames{display:block}#chatdraw animate-area animate-frame{display:block;position:relative;margin:0;padding:2px 7px}#chatdraw animate-area animate-frame[data-selected]{background-color:#666}#chatdraw animate-area animate-frames canvas{width:100%!important;box-sizing:border-box!important;cursor:pointer}#chatdraw animate-area animate-frame frame-controls{position:absolute;left:9px;bottom:4px;display:block;width:-webkit-calc(100% - 18px);width:calc(100%-18px);vertical-align:bottom}#chatdraw animate-area animate-frame frame-controls>*{height:11px;font-size:9px;border-radius:0;margin:0;padding:0}#chatdraw animate-area animate-frame frame-controls button{border:none;background-color:transparent;float:right;margin:0 0 0 2px;padding:0}#chatdraw animate-area animate-frame frame-controls input{width:30px;box-sizing:border-box;border:1px solid #bbb;background-color:#eee}#chatdraw animate-area animate-frame frame-controls .left{float:left;margin-left:0;margin-right:2px}#chatdraw animate-area button-area input{height:25px;box-sizing:border-box;border-radius:0;border:1px solid #bbb;background-color:#eee}#chatdraw animate-area button-area input[type=number]{width:50px}#chatdraw animate-area button-area input[name=name]{width:125px}#chatdraw[data-scale="2"] canvas{width:400px}#chatdraw[data-scale="2"] animate-area{height:300px}#chatdraw[data-scale="2"]:not([data-hidden])>button-area button{height:50px;width:50px;font-size:28px}#chatdraw[data-scale="3"] canvas{width:600px}#chatdraw[data-scale="3"] animate-area{height:450px}#chatdraw[data-scale="3"]:not([data-hidden])>button-area button{height:75px;width:75px;font-size:42px}#chatdraw[data-scale="4"] canvas{width:800px}#chatdraw[data-scale="4"] animate-area{height:600px}#chatdraw[data-scale="4"]:not([data-hidden])>button-area button{height:100px;width:100px;font-size:56px}#chatdraw[data-scale="5"] canvas{width:1000px}#chatdraw[data-scale="5"] animate-area{height:750px}#chatdraw[data-scale="5"]:not([data-hidden])>button-area button{height:125px;width:125px;font-size:70px}
+#chatdraw,
+#chatdraw animate-area {
+    background-color: #f8f8f8;
+    position: absolute
+}
 
+#sendpane {
+    position: relative
+}
+
+#chatdraw {
+    display: block;
+    z-index: 10;
+    bottom: 1px;
+    right: 1px
+}
+
+#chatdraw[data-fixedsize] {
+    font-size: 0;
+    height: 80vh;
+    box-sizing: border-box;
+    border: 1px solid #bbb;
+    width: calc(100%-3.25rem-3.25rem)
+}
+
+#chatdraw[data-docked] {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    width: 75%
+}
+
+#chatdraw[data-fixedsize] iframe {
+    border: none;
+    width: 100%;
+    height: calc(100%-50px);
+    margin: 0;
+    padding: 0
+}
+
+#chatdraw :focus,
+#chatdraw:focus {
+    outline: 0
+}
+
+#chatdraw canvas,
+#messagepane canvas {
+    display: inline-block;
+    vertical-align: bottom;
+    image-rendering: pixelated;
+    border: 1px solid #bbb;
+    margin: 0;
+    padding: 0
+}
+
+#chatdraw canvas.lightbox {
+    pointer-events: none;
+    position: absolute;
+    left: 0;
+    top: 0
+}
+
+#chatdraw .overlay {
+    position: absolute;
+    left: 0;
+    top: 0
+}
+
+#chatdraw canvas {
+    cursor: crosshair
+}
+
+#chatdraw[data-hidden] {
+    width: unset;
+    height: unset
+}
+
+#chatdraw[data-hidden] :not([data-keep]) {
+    display: none !important
+}
+
+#chatdraw button-area {
+    display: block;
+    font-size: 0;
+    background-color: #eee
+}
+
+#chatdraw:not([data-hidden])>button-area {
+    text-align: right;
+    border-left: 1px solid #bbb;
+    border-right: 1px solid #bbb
+}
+
+#chatdraw button-area button,
+#chatdraw button-area input {
+    display: inline-block;
+    border: none;
+    border-radius: unset;
+    height: 25px;
+    width: 25px;
+    font-size: 14px;
+    outline: 0
+}
+
+#chatdraw button-area button:hover {
+    background-color: #ddd
+}
+
+#chatdraw button-area button:active {
+    transform: none !important
+}
+
+#chatdraw button-area button:disabled {
+    color: #bbb;
+    background-color: #ddd
+}
+
+#chatdraw button-area button[data-selected] {
+    background-color: #888;
+    color: #eee
+}
+
+chatdraw-controlcontainer {
+    width: 1.1rem;
+    display: inline-block
+}
+
+chatdraw-controlcontainer>a {
+    text-decoration: none !important;
+    display: inline-block;
+    font-size: .8rem;
+    cursor: pointer;
+    padding: 0 .2em
+}
+
+chatdraw-controlcontainer .chatdrawplay {
+    font-size: 1rem
+}
+
+#chatdraw animate-area {
+    left: -201px;
+    top: 0;
+    width: 200px;
+    height: 150px;
+    display: block;
+    border-left: 1px solid #bbb;
+    border-top: 1px solid #bbb;
+    border-bottom: 1px solid #bbb
+}
+
+#chatdraw animate-area>* {
+    width: 100%
+}
+
+#chatdraw animate-area animate-scroller {
+    display: block;
+    height: -webkit-calc(100% - 50px);
+    height: calc(100%-50px);
+    overflow-y: scroll
+}
+
+#chatdraw animate-area animate-frames {
+    display: block
+}
+
+#chatdraw animate-area animate-frame {
+    display: block;
+    position: relative;
+    margin: 0;
+    padding: 2px 7px
+}
+
+#chatdraw animate-area animate-frame[data-selected] {
+    background-color: #666
+}
+
+#chatdraw animate-area animate-frames canvas {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    cursor: pointer
+}
+
+#chatdraw animate-area animate-frame frame-controls {
+    position: absolute;
+    left: 9px;
+    bottom: 4px;
+    display: block;
+    width: -webkit-calc(100% - 18px);
+    width: calc(100%-18px);
+    vertical-align: bottom
+}
+
+#chatdraw animate-area animate-frame frame-controls>* {
+    height: 11px;
+    font-size: 9px;
+    border-radius: 0;
+    margin: 0;
+    padding: 0
+}
+
+#chatdraw animate-area animate-frame frame-controls button {
+    border: none;
+    background-color: transparent;
+    float: right;
+    margin: 0 0 0 2px;
+    padding: 0
+}
+
+#chatdraw animate-area animate-frame frame-controls input {
+    width: 30px;
+    box-sizing: border-box;
+    border: 1px solid #bbb;
+    background-color: #eee
+}
+
+#chatdraw animate-area animate-frame frame-controls .left {
+    float: left;
+    margin-left: 0;
+    margin-right: 2px
+}
+
+#chatdraw animate-area button-area input {
+    height: 25px;
+    box-sizing: border-box;
+    border-radius: 0;
+    border: 1px solid #bbb;
+    background-color: #eee
+}
+
+#chatdraw animate-area button-area input[type=number] { width: 50px }
+#chatdraw animate-area button-area input[name=name] { width: 125px }
+
+#chatdraw #colorPicker { padding: 5px; }
+
+#chatdraw[data-scale="2"] #colorPicker { padding: 10px; }
+#chatdraw[data-scale="2"] canvas { width: 400px }
+#chatdraw[data-scale="2"] animate-area { height: 300px }
+#chatdraw[data-scale="2"]:not([data-hidden])>button-area button,
+#chatdraw[data-scale="2"]:not([data-hidden])>button-area input {
+    height: 50px;
+    width: 50px;
+    font-size: 28px
+}
+
+#chatdraw[data-scale="3"] #colorPicker { padding: 15px; }
+#chatdraw[data-scale="3"] canvas { width: 600px }
+#chatdraw[data-scale="3"] animate-area { height: 450px }
+#chatdraw[data-scale="3"]:not([data-hidden])>button-area button, 
+#chatdraw[data-scale="3"]:not([data-hidden])>button-area input {
+    height: 75px;
+    width: 75px;
+    font-size: 42px
+}
+
+#chatdraw[data-scale="4"] #colorPicker { padding: 20px; }
+#chatdraw[data-scale="4"] canvas { width: 800px }
+#chatdraw[data-scale="4"] animate-area { height: 600px }
+#chatdraw[data-scale="4"]:not([data-hidden])>button-area button,
+#chatdraw[data-scale="4"]:not([data-hidden])>button-area input {
+    height: 100px;
+    width: 100px;
+    font-size: 56px
+}
+
+#chatdraw[data-scale="5"] #colorPicker { padding: 25px; }
+#chatdraw[data-scale="5"] canvas { width: 1000px }
+#chatdraw[data-scale="5"] animate-area { height: 750px }
+#chatdraw[data-scale="5"]:not([data-hidden])>button-area button,
+#chatdraw[data-scale="5"]:not([data-hidden])>button-area input {
+    height: 125px;
+    width: 125px;
+    font-size: 70px
+}
