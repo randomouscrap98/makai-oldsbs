@@ -13,6 +13,9 @@ var LocalChatDraw = (function() {
    var chatDrawCanvasWidth = 200;
    var chatDrawCanvasHeight = 100;
 
+   var imageHost = location.protocol + "//kland.smilebasicsource.com";
+   //var imageHost = "http://localhost:5000";
+
    var drawAreaID = "chatdraw";
    var colorButtonClass = "colorChange";
    var colorPickerID = "colorPicker";
@@ -706,7 +709,7 @@ var LocalChatDraw = (function() {
                var animation = animationPlayer.ToStorageObject();
                var uploadData = new FormData();
                uploadData.append("text", JSON.stringify(animation));
-               RequestUtilities.XHRSimple(location.protocol + "//kland.smilebasicsource.com/uploadtext",
+               RequestUtilities.XHRSimple(imageHost + "/uploadtext",
                   function(response)
                   {
                      if(response.startsWith("http"))
@@ -734,7 +737,7 @@ var LocalChatDraw = (function() {
                var uploadData = new FormData();
                uploadData.append("animation", JSON.stringify(animation));
                uploadData.append("bucket", ChatDrawUtilities.ExportBucket()); //"chatDrawAnimations");
-               RequestUtilities.XHRSimple(location.protocol + "//kland.smilebasicsource.com/uploadimage",
+               RequestUtilities.XHRSimple(imageHost + "/uploadimage",
                   function(response)
                   {
                      if(response.startsWith("http"))
