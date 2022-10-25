@@ -37,7 +37,7 @@ public class ChatlogController : BaseController
 
     protected string EscapeShellArg(string arg)
     {
-        return "'" + arg.Replace(@"\", @"\\").Replace("'", @"'\''") + "'";
+        return "'" + arg.Replace("'", @"'\''") + "'";
     }
 
     protected string EscapeBashArg(string command)
@@ -78,7 +78,7 @@ public class ChatlogController : BaseController
                 incl = $"--include={filefilter}";
             }
 
-            var command = $"ls *.txt | xargs grep -InE {EscapeShellArg(search)} {incl}";
+            var command = $"ls *.txt | xargs grep -InE -e {EscapeShellArg(search)} {incl}";
 
             if (after > 0)
                 command += $" -A {after}";
