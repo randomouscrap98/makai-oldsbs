@@ -290,6 +290,11 @@ SimpleDraw.prototype.Generate = function(width, height, layerCount, maxUndos)
    colorPicker.addEventListener("change", function(e) { me.drawer.color = colorPicker.value; });
    toolOptions.appendChild(colorPicker);
 
+   //2023: Second element is HSV slider to manually modify color input
+   var hsvPicker = document.createElement("button");
+   hsvPicker.textContent = "COL";
+   toolOptions.appendChild(hsvPicker);
+
    var widthContainer = document.createElement("div");
    var widthDown = document.createElement("button");
    var widthUp = document.createElement("button");
@@ -695,4 +700,22 @@ SimpleDraw.prototype.ResetNavigation = function()
    this.zoom = this.minZoom;
    this.RefreshLocation();
    this.UpdateZoom(); //SetCanvasZoom(this.zoom);
+};
+
+SimpleDraw.prototype.CreateColorPicker = function(input)
+{
+   var h = document.createElement("input");
+   h.type = "range";
+   h.min = 0;
+   h.max = 360;
+   h.value = 0;
+   var s = document.createElement("input");
+   s.type = "range";
+   s.min = 0;
+   s.max = 1;
+   s.value = 1;
+
+   var container = document.createElement("div");
+
+   return container;
 };
