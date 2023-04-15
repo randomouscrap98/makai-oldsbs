@@ -293,6 +293,10 @@ SimpleDraw.prototype.Generate = function(width, height, layerCount, maxUndos)
    //2023: Second element is HSV slider to manually modify color input
    var hsvPicker = document.createElement("button");
    hsvPicker.textContent = "COL";
+   hsvPicker.addEventListener('click', function(e) {
+      var newpicker = me.CreateColorPicker(colorPicker);
+      UXUtilities.Alert(newpicker);
+   });
    toolOptions.appendChild(hsvPicker);
 
    var widthContainer = document.createElement("div");
@@ -704,18 +708,132 @@ SimpleDraw.prototype.ResetNavigation = function()
 
 SimpleDraw.prototype.CreateColorPicker = function(input)
 {
+   var coldiv = document.createElement("div");
+   coldiv.style.width = "2em";
+   coldiv.style.height = "2em";
+   coldiv.style.margin = "auto";
+
+   var rgb = StyleUtilities.GetColor(input.value); //Color type
+   var hsv = SimpleDraw.RgbToHsv(rgb.r, rgb.g, rgb.b);
+   //console.log(rgb, hsv);
+
    var h = document.createElement("input");
    h.type = "range";
    h.min = 0;
-   h.max = 360;
-   h.value = 0;
+   h.max = 1;
+   h.step = 0.01;
+   h.value = hsv.h;
    var s = document.createElement("input");
    s.type = "range";
    s.min = 0;
    s.max = 1;
-   s.value = 1;
+   s.step = 0.01;
+   s.value = hsv.s;
+   var v = document.createElement("input");
+   v.type = "range";
+   v.min = 0;
+   v.max = 1;
+   v.step = 0.01;
+   v.value = hsv.v;
+
+   var updateCol = function()
+   {
+      var newRgb = SimpleDraw.HsvToRgb(h.value, s.value, v.value);
+      var newRgbCol = new Color(newRgb.r, newRgb.g, newRgb.b);
+      var colString = newRgbCol.ToHexString();
+      //console.log("Changing: ", newRgb, newRgbCol, colString);
+      coldiv.style.backgroundColor = colString;
+      input.value = colString;
+   };
+
+   h.oninput = updateCol;
+   s.oninput = updateCol;
+   v.oninput = updateCol;
+
+   //Make sure the coldiv has the right color or something
+   updateCol();
+
+   var ht = document.createElement("div");
+   ht.textContent = "Hue:";
+   var st = document.createElement("div");
+   st.textContent = "Saturation:";
+   var vt = document.createElement("div");
+   vt.textContent = "Value:";
 
    var container = document.createElement("div");
+   container.appendChild(coldiv);
+   container.appendChild(ht);
+   container.appendChild(h);
+   container.appendChild(st);
+   container.appendChild(s);
+   container.appendChild(vt);
+   container.appendChild(v);
+
+   //container.style.
+   //container.style.display = "flex";
+   //container.style.flexDirection = "column";
 
    return container;
 };
+
+//These two functions taken from https://stackoverflow.com/a/17243070/1066474
+
+/* accepts parameters
+ * h  Object = {h:x, s:y, v:z}
+ * OR 
+ * h, s, v
+*/
+SimpleDraw.HsvToRgb = function (h, s, v)
+{
+   var r, g, b, i, f, p, q, t;
+   if (arguments.length === 1) {
+       s = h.s, v = h.v, h = h.h;
+   }
+   i = Math.floor(h * 6);
+   f = h * 6 - i;
+   p = v * (1 - s);
+   q = v * (1 - f * s);
+   t = v * (1 - (1 - f) * s);
+   switch (i % 6) {
+       case 0: r = v, g = t, b = p; break;
+       case 1: r = q, g = v, b = p; break;
+       case 2: r = p, g = v, b = t; break;
+       case 3: r = p, g = q, b = v; break;
+       case 4: r = t, g = p, b = v; break;
+       case 5: r = v, g = p, b = q; break;
+   }
+   return {
+       r: Math.round(r * 255),
+       g: Math.round(g * 255),
+       b: Math.round(b * 255)
+   };
+};
+
+/* accepts parameters
+ * r  Object = {r:x, g:y, b:z}
+ * OR 
+ * r, g, b
+*/
+SimpleDraw.RgbToHsv = function (r, g, b) {
+   if (arguments.length === 1) {
+       g = r.g, b = r.b, r = r.r;
+   }
+   var max = Math.max(r, g, b), min = Math.min(r, g, b),
+       d = max - min,
+       h,
+       s = (max === 0 ? 0 : d / max),
+       v = max / 255;
+
+   switch (max) {
+       case min: h = 0; break;
+       case r: h = (g - b) + d * (g < b ? 6: 0); h /= 6 * d; break;
+       case g: h = (b - r) + d * 2; h /= 6 * d; break;
+       case b: h = (r - g) + d * 4; h /= 6 * d; break;
+   }
+
+   return {
+       h: h,
+       s: s,
+       v: v
+   };
+}

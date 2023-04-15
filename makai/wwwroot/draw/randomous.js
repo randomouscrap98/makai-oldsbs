@@ -618,7 +618,8 @@ DialogBox.prototype.Show = function(text, buttons)
    var dialog = HTMLUtilities.CreateContainer(DialogBox.DialogClass);
    var dialogText = document.createElement("span");
    var dialogButtons = HTMLUtilities.CreateContainer(DialogBox.ButtonContainerClass);
-   dialogText.innerHTML = text;
+   if(text instanceof HTMLElement) dialogText.appendChild(text);
+   else dialogText.innerHTML = text;
    dialogText.className = DialogBox.TextClass;
    dialog.appendChild(dialogText);
    dialog.appendChild(dialogButtons);
